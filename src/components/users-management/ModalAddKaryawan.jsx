@@ -41,7 +41,6 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
         }
         const response = await createUser(unitKerja.id, body)
         const { data } = response
-        console.log(response?.response?.data?.message?.description)
         if (data?.data) {
             setOpenSnackbar({
                 open: true,
@@ -70,7 +69,6 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
         }
         setLoadingListRole(false)
     }, [unitKerja])
-
 
     useEffect(() => {
         if (Nama && Email && jabatan && birthDate && phone &&gender) {

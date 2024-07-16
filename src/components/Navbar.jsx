@@ -3,10 +3,8 @@ import { useAppContext } from '@/context'
 import { Icon } from '@iconify/react'
 import { Button, Select, MenuItem, FormControl, InputLabel, Autocomplete, TextField } from '@mui/material'
 import Image from 'next/image'
-import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
-import nookies from 'nookies'
 import { getMeRole } from '@/api/getMe'
 
 let globalMenu = []
@@ -25,6 +23,7 @@ const Navbar = () => {
             globalMenu = data?.data?.role?.features
             setMenu(data?.data?.role?.features)
         } else {
+            globalMenu = []
             setMenu([])
         }
     }, [unitKerja])
@@ -39,7 +38,11 @@ const Navbar = () => {
     useEffect(() => {
         if (suggestUnitKerja) {
             if (!unitKerja) {
-                setUnitKerja(suggestUnitKerja[0])
+                suggestUnitKerja.forEach(element => {
+                    if (element.selected) {
+                        setUnitKerja(element)
+                    }
+                })
             }
         }
     }, [setUnitKerja, suggestUnitKerja, unitKerja])
@@ -69,6 +72,7 @@ const Navbar = () => {
                 <div className='px-4'>
                     {(suggestUnitKerja && unitKerja) &&
                         <Autocomplete
+                            disableClearable
                             disablePortal
                             value={unitKerja}
                             onChange={(e, value) => setUnitKerja(value)}
@@ -154,6 +158,7 @@ export const MobileNavbar = () => {
             <div className='px-3'>
                 {(suggestUnitKerja && unitKerja) &&
                     <Autocomplete
+                        disableClearable
                         disablePortal
                         value={unitKerja}
                         onChange={(e, value) => setUnitKerja(value)}

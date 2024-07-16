@@ -14,7 +14,7 @@ const ImageView = ({ photo }) => {
                 onClose={() => setOpen(false)}
                 className="flex items-center justify-center select-none"
             >
-                <div className="w-[90vw] md:w-auto md:h-[50vh] aspect-square rounded-2xl overflow-clip outline-none">
+                <div className="h-[50vh] aspect-square rounded-2xl overflow-clip outline-none">
                     <div className='relative'>
                         <div className="absolute top-4 right-4 ">
                             <button

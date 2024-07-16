@@ -43,7 +43,7 @@ const InformasiTab = ({ profile, refresh, selectedMenu, setSelectedMenu }) => {
         16: { Component: PenugasanTab, dataKey: 'data_penugasan' },
         17: { Component: AgpTab, dataKey: 'data_agp' },
     }
-    const { Component, dataKey } = menuComponents[selectedMenu.id] || {};
+    const { Component, dataKey } = menuComponents[selectedMenu.id] || {}
 
     const ButtonNavbarInformasi = () => {
         return (
@@ -74,6 +74,7 @@ const InformasiTab = ({ profile, refresh, selectedMenu, setSelectedMenu }) => {
                         title={selectedMenu.title}
                         data={profile?.[dataKey]}
                         refresh={refresh}
+                        geotagging={profile?.user_group_profiling}
                     />
                 )}
             </div>
@@ -107,12 +108,12 @@ export const InformasiFormatting = ({ label, value, image = false, link = false 
                         </Link>
 
                     ) : (
-                        <div className='w-[60%] text-right'>
+                        <div className='w-[60%] flex justify-end'>
                             <h3 className='font-medium'>{value}</h3>
                         </div>
                     )
                 ) : (
-                    <h3 className='w-[60%] text-right'>-</h3>
+                    <h3>-</h3>
                 )}
             </div >
             <hr className='transition-all opacity-0 group-hover:opacity-100' />

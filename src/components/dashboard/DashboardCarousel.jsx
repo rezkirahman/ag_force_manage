@@ -3,7 +3,7 @@ import { useAppContext } from '@/context'
 import NumberTicker from '@/helper/NumberTicker'
 import { adjustAlphaColor } from '@/helper/adjustAlphaColor'
 import { Icon } from '@iconify/react'
-import { color } from 'framer-motion'
+import Link from 'next/link'
 import React, { useCallback, useEffect, useState } from 'react'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
@@ -35,9 +35,10 @@ const responsive = {
     }
 }
 
-const CarouselCard = ({ title, color, icon, total, description }) => {
+const CarouselCard = ({ title, color, icon, total, description, url='' }) => {
     return (
-        <div className='duration-200 bg-white rounded-2xl hover:scale-105 shadow-container'>
+        <Link href={url}>
+            <div  className='duration-200 bg-white rounded-2xl hover:bg-gray-100 hover:translate-y-1 shadow-container'>
             <div
                 className='p-4 bg-white rounded-2xl md:aspect-[4/3] cursor-pointer flex flex-col items-start justify-between gap-2'
                 style={{ color: color, backgroundColor: adjustAlphaColor(color, 0.1) }}
@@ -53,7 +54,8 @@ const CarouselCard = ({ title, color, icon, total, description }) => {
                     <h3 className='text-xs font-medium text-white'>{description}</h3>
                 </div>
             </div>
-        </div>
+            </div>
+        </Link>
     )
 }
 
@@ -82,6 +84,7 @@ const DashboardCarousel = () => {
                     title={'Total User'}
                     total={data?.total_users?.total_users}
                     description={'All'}
+                    url={'/users-management'}
                 />
                 <CarouselCard
                     color={'rgba(227, 129, 28, 1)'}
@@ -89,6 +92,7 @@ const DashboardCarousel = () => {
                     title={'ON Duty'}
                     total={data?.duty?.total_duty_today}
                     description={'Today'}
+                    url={'/tracking-map'}
                 />
                 <CarouselCard
                     color={'rgba(150, 28, 227, 1)'}
@@ -96,6 +100,7 @@ const DashboardCarousel = () => {
                     title={'Activity Report'}
                     total={data?.activity?.total_activity_today}
                     description={'Today'}
+                    url={'/journal-activity'}
                 />
                 <CarouselCard
                     color={'rgba(227, 28, 28, 1)'}
@@ -103,6 +108,7 @@ const DashboardCarousel = () => {
                     title={'Incident Report'}
                     total={data?.incident?.total_incident_today}
                     description={'Today'}
+                    url={'/incident-report'}
                 />
             </Carousel>
         </div>

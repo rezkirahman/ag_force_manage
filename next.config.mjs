@@ -33,7 +33,11 @@ const nextConfig = {
             {
                 protocol:'https',
                 hostname:'pai.agforce.co.id',
-            }
+            },
+            {
+                protocol:'https',
+                hostname:'pai-dev.agforce.co.id',
+            },
         ]
     },
 };

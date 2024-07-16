@@ -26,7 +26,7 @@ const ModalEditLegal = ({ open, setOpen, refresh, title, data }) => {
         } else {
             return file
         }
-    }, [unitKerja.id])
+    }, [unitKerja])
 
 
     const handleUpdate = useCallback(async () => {

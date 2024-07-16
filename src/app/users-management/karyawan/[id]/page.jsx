@@ -10,8 +10,9 @@ import ModalChangePhotoProfiling from "@/components/users-management/informasi/m
 
 const Page = ({ params }) => {
     const userId = params.id
-    const { unitKerja } = useAppContext()
+    const { unitKerja, setOpenSnackbar } = useAppContext()
     const [tab, setTab] = useState('informasi')
+    const [isNotLoaded, setIsNotLoaded] = useState(false)
     const [selectedMenuInformasi, setSelectedMenuInformasi] = useState({
         id: 1,
         title: 'Profil',
@@ -23,8 +24,10 @@ const Page = ({ params }) => {
     const [profile, setProfile] = useState({})
     const [openModalChangePhoto, setOpenModalChangePhoto] = useState(false)
 
+
     const handleGetInformasiKaryawan = useCallback(async () => {
         if (!unitKerja) return
+        setIsNotLoaded(false)
         const { data } = await informationProfile(unitKerja.id, userId)
         if (data?.data) {
             setProfile(data.data)
@@ -32,8 +35,19 @@ const Page = ({ params }) => {
             setName(data?.data?.data_profil_akun?.full_name)
             const role = data?.data?.data_profil_akun?.role
             setJabatan(role?.map((role) => role?.role_name))
+        } else {
+            setOpenSnackbar({
+                open: true,
+                severity: 'error',
+                message: 'Gagal mendapatkan data karyawan'
+            })
+            setProfile({})
+            setPhoto('https://pai.agforce.co.id/assets/user/f35dca8d2f0a4bf6a0da0fc1a113f71d.png')
+            setName('')
+            setJabatan([])
+            setIsNotLoaded(true)
         }
-    }, [unitKerja, userId])
+    }, [setOpenSnackbar, unitKerja, userId])
 
     useEffect(() => {
         handleGetInformasiKaryawan()
@@ -82,7 +96,7 @@ const Page = ({ params }) => {
                         ))}
                     </div>
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-start">
                     <Tabs
                         value={tab}
                         onChange={(e, v) => setTab(v)}
@@ -99,14 +113,18 @@ const Page = ({ params }) => {
                     </Tabs>
                 </div>
             </div>
-            {tab === 'informasi' && (
-                <InformasiTab
-                    profile={profile}
-                    refresh={handleGetInformasiKaryawan}
-                    selectedMenu={selectedMenuInformasi}
-                    setSelectedMenu={setSelectedMenuInformasi}
-                />
-            )}
+            {isNotLoaded ? (
+                <h3 className="text-center">Data tidak ditemukan</h3>
+            ) :
+                tab === 'informasi' && (
+                    <InformasiTab
+                        profile={profile}
+                        refresh={handleGetInformasiKaryawan}
+                        selectedMenu={selectedMenuInformasi}
+                        setSelectedMenu={setSelectedMenuInformasi}
+                    />
+                )
+            }
         </Layout>
     )
 }

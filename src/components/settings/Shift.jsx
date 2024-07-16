@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import Container from '../Container'
 import { Icon } from '@iconify/react'
-import { Alert, Button, IconButton, InputAdornment, TableBody, TextField, Tooltip } from '@mui/material'
+import { Alert, Button, IconButton, InputAdornment, TextField, Tooltip } from '@mui/material'
 import { useAppContext } from '@/context'
 import { deleteUserShift, listUserShifts } from '@/api/settings/work-days-shift'
-import { BodyItem, BodyRow, HeadItem, HeadRow, Table, TableHead } from '../Table'
+import { BodyItem, BodyRow, HeadItem, HeadRow, Table, TableHead, TableBody } from '../Table'
 import ModalDeleteConfirmation from '../ModalDeleteConfirmation'
 import ModalAddUserShift from './shift/ModalAddUserShift'
 
@@ -124,13 +124,13 @@ const Shift = () => {
                                 <BodyItem end>
                                     <Tooltip title='Hapus' arrow>
                                         <IconButton
-                                        color='error'
+                                            color='error'
                                             onClick={() => {
                                                 setSelectedUser(item)
                                                 setOpenModalDeleteUser(true)
                                             }}
                                         >
-                                            <Icon icon='material-symbols:delete' className='text-lg'/>
+                                            <Icon icon='material-symbols:delete' className='text-lg' />
                                         </IconButton>
                                     </Tooltip>
                                 </BodyItem>

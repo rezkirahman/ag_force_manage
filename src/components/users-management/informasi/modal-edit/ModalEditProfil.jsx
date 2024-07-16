@@ -70,6 +70,12 @@ const ModalEditProfil = ({ open, setOpen, refresh, title, data }) => {
             })
             refresh()
             setOpen(false)
+        }else{
+            setOpenSnackbar({
+                open: true,
+                severity: 'error',
+                message: 'Gagal mengubah profil'
+            })
         }
         setLoadingUpdate(false)
     }, [email, firstName, id, jk, lastName, nik, params.id, phone, refresh, selectedRole, setOpen, setOpenSnackbar, title, unitKerja])

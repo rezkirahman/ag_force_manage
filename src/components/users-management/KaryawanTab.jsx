@@ -1,37 +1,42 @@
 'use client'
 import { Icon } from "@iconify/react"
 import Container from "../Container"
-import Transition from "../transition"
 import { useCallback, useEffect, useState } from "react"
-import { Autocomplete, IconButton, InputAdornment, Menu, MenuItem, Pagination, TextField, Tooltip } from "@mui/material"
+import { Autocomplete, IconButton, InputAdornment, Menu, MenuItem, TextField, Tooltip } from "@mui/material"
 import { useDebounce } from "use-debounce"
-import { BodyItem, BodyRow, HeadItem, HeadRow, Table, TableHead, TableBody } from "../Table"
 import { useAppContext } from "@/context"
 import { roleSuggestion } from "@/api/role"
 import ModalDeleteConfirmation from "../ModalDeleteConfirmation"
 import ModalAddKaryawan from "./ModalAddKaryawan"
 import PhotoView from "../PhotoView"
-import { useRouter } from "next/navigation"
 import { kickUser, listUsers, resetPINUsers } from "@/api/users-management/users"
+import Link from "next/link"
+import { useInView } from "react-intersection-observer"
+import ModalResetPINConfirmation from "./ModalResetPINConfirmation"
 
 const KaryawanTab = () => {
     const { unitKerja, setOpenSnackbar } = useAppContext()
-    const router = useRouter()
     const [openModalAddKaryawan, setOpenModalAddKaryawan] = useState(false)
     const [page, setPage] = useState(1)
     const [totalUser, setTotalUser] = useState(0)
     const [anchorEl, setAnchorEl] = useState(null)
-    const [openModalDeleteKaryawan, setOpenModalDeleteKaryawan] = useState(false)
     const open = Boolean(anchorEl)
+    const [openModalDeleteKaryawan, setOpenModalDeleteKaryawan] = useState(false)
+    const [openModalResetPIN, setOpenModalResetPIN] = useState(false)
     const [loadingListKaryawan, setLoadingListKaryawan] = useState(false)
+    const [loadingResetPIN, setLoadingResetPIN] = useState(false)
+    const [loadingDelete, setLoadingDelete] = useState(false)
     const [listKaryawan, setListKaryawan] = useState([])
     const [selectedKaryawan, setSelectedKaryawan] = useState(null)
     const [loadingListRole, setLoadingListRole] = useState(false)
     const [listRole, setListRole] = useState([])
     const [selectedRole, setSelectedRole] = useState(null)
     const [SearchName, setSearchName] = useState('')
-    const [searchNameDebounced] = useDebounce(SearchName, 1000)
+    const [searchNameDebounced] = useDebounce(SearchName, 500)
     const [totalPage, setTotalPage] = useState(1)
+    const [ref, inView] = useInView({
+        threshold: 0.5,
+    })
 
     const handleListRole = useCallback(async () => {
         if (!unitKerja) return
@@ -50,11 +55,9 @@ const KaryawanTab = () => {
 
     const handlelistUser = useCallback(async () => {
         if (!unitKerja) return
-        setListKaryawan([])
-        setPage(page)
         setLoadingListKaryawan(true)
         const body = {
-            limit: 10,
+            limit: 24,
             search: searchNameDebounced,
             role_id: selectedRole?.value,
             page: page,
@@ -64,18 +67,26 @@ const KaryawanTab = () => {
         const { data } = await listUsers(unitKerja.id, body)
         if (data?.data) {
             const list = data?.data
-            setListKaryawan(list?.users)
+            if (page > 1) {
+                setListKaryawan(prevData => [...prevData, ...list?.users])
+            } else {
+                setListKaryawan(list?.users)
+            }
             setTotalUser(list?.count?.total_user)
             setTotalPage(data.pagination.total_pages)
-            setPage(data.pagination.current_page)
+        } else {
+            setListKaryawan([])
+            setTotalUser(0)
+            setTotalPage(1)
         }
         setLoadingListKaryawan(false)
     }, [page, searchNameDebounced, selectedRole, unitKerja])
 
-    const handleResetPIN = useCallback(async (id) => {
+    const handleResetPIN = useCallback(async () => {
         if (!unitKerja) return
+        setLoadingResetPIN(true)
         const body = {
-            user_id: id
+            user_id: selectedKaryawan.id
         }
         const { data } = await resetPINUsers(unitKerja.id, body)
         if (data?.data) {
@@ -84,11 +95,14 @@ const KaryawanTab = () => {
                 message: 'Berhasil Reset PIN',
                 severity: 'success'
             })
+            setOpenModalResetPIN(false)
         }
-    }, [setOpenSnackbar, unitKerja])
+        setLoadingResetPIN(false)
+    }, [selectedKaryawan, setOpenSnackbar, unitKerja])
 
     const handleDeleteUser = useCallback(async () => {
         if (!unitKerja) return
+        setLoadingDelete(true)
         const { data } = await kickUser(unitKerja.id, selectedKaryawan.id)
         if (data?.data) {
             setOpenSnackbar({
@@ -99,6 +113,7 @@ const KaryawanTab = () => {
             setOpenModalDeleteKaryawan(false)
             handlelistUser()
         }
+        setLoadingDelete(false)
     }, [handlelistUser, selectedKaryawan, setOpenSnackbar, unitKerja])
 
     useEffect(() => {
@@ -109,31 +124,82 @@ const KaryawanTab = () => {
         handlelistUser()
     }, [handlelistUser])
 
+    useEffect(() => {
+        if (inView && (totalPage > 0)) {
+            setPage(prevData => prevData < totalPage ? prevData + 1 : prevData)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inView])
+
+    useEffect(() => {
+        if (searchNameDebounced || selectedRole) {
+            setPage(1)
+        }
+    }, [searchNameDebounced, selectedRole])
+
+    useEffect(() => {
+        setPage(1)
+        setTotalPage(1)
+    }, [unitKerja])
+
     return (
-        <Transition>
-            <Container>
+        <div className="space-y-6">
+            <Container className={'sticky top-0 z-20'}>
                 <ModalAddKaryawan
                     open={openModalAddKaryawan}
                     setOpen={setOpenModalAddKaryawan}
                     refresh={handlelistUser}
+                />
+                <ModalResetPINConfirmation
+                    open={openModalResetPIN}
+                    setOpen={setOpenModalResetPIN}
+                    handle={handleResetPIN}
+                    loading={loadingResetPIN}
+                    description={<h3>Mereset PIN <span className="font-semibold">{selectedKaryawan?.name}</span> ?</h3>}
                 />
                 <ModalDeleteConfirmation
                     open={openModalDeleteKaryawan}
                     setOpen={setOpenModalDeleteKaryawan}
                     title='Hapus Karyawan'
                     description={<h3>Apakah anda yakin ingin menghapus <span className="font-semibold">{selectedKaryawan?.name}</span> dari daftar karyawan?</h3>}
+                    loading={loadingDelete}
                     handleDelete={handleDeleteUser}
+                    
                 />
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between gap-3">
-                        <div className='flex items-center gap-2'>
-                            <h3 className='text-lg font-semibold'>Karyawan</h3>
-                            <div className='flex items-center gap-1 px-4 py-2 rounded-full text-primary bg-primary/10 ring-1 ring-inset ring-primary'>
-                                <Icon icon={'solar:user-bold'} />
-                                <h3 className='text-xs font-semibold'>{totalUser}</h3>
-                            </div>
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className='flex items-center gap-2 '>
+                        <h3 className='text-lg font-semibold'>Karyawan</h3>
+                        <div className='flex items-center gap-1 px-4 py-2 rounded-full text-primary bg-primary/10 ring-1 ring-inset ring-primary'>
+                            <Icon icon={'solar:user-bold'} />
+                            <h3 className='text-xs font-semibold'>{totalUser}</h3>
                         </div>
-                        <div className='flex items-center gap-2'>
+                    </div>
+                    <div className="flex items-center justify-end gap-2 grow">
+                        <div className="flex items-center gap-3 grow lg:w-1/2">
+                            <Autocomplete
+                                disablePortal
+                                loading={loadingListRole}
+                                value={selectedRole?.name}
+                                onChange={(event, newValue) => {
+                                    setSelectedRole(newValue)
+                                    setPage(1)
+                                }}
+                                options={listRole}
+                                className="w-full"
+                                renderInput={(params) => <TextField {...params} label="Jabatan" />}
+                            />
+                            <TextField
+                                value={SearchName}
+                                onChange={(e) => { setSearchName(e.target.value), setPage(1) }}
+                                label='Pencarian'
+                                variant='outlined'
+                                fullWidth
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start"><Icon icon={'material-symbols:search'} /></InputAdornment>,
+                                }}
+                            />
+                        </div>
+                        <div className=''>
                             <IconButton
                                 variant='outlined'
                                 size='large'
@@ -176,105 +242,119 @@ const KaryawanTab = () => {
                             </Menu>
                         </div>
                     </div>
-                    <div className="flex flex-col items-center gap-3 md:flex-row lg:w-1/2">
-                        <Autocomplete
-                            disablePortal
-                            loading={loadingListRole}
-                            value={selectedRole?.name}
-                            onChange={(event, newValue) => {
-                                setSelectedRole(newValue)
-                                setPage(1)
-                            }}
-                            options={listRole}
-                            className="w-full"
-                            renderInput={(params) => <TextField {...params} label="Jabatan" />}
-                        />
-                        <TextField
-                            value={SearchName}
-                            onChange={(e) => { setSearchName(e.target.value), setPage(1) }}
-                            label='Pencarian'
-                            variant='outlined'
-                            fullWidth
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start"><Icon icon={'material-symbols:search'} /></InputAdornment>,
-                            }}
-                        />
-                    </div>
-                    <Table list={listKaryawan} loading={loadingListKaryawan}>
-                        <TableHead>
-                            <HeadRow>
-                                <HeadItem start>ID</HeadItem>
-                                <HeadItem>Nama</HeadItem>
-                                <HeadItem>Jabatan</HeadItem>
-                                <HeadItem>No. telp</HeadItem>
-                                <HeadItem end>Action</HeadItem>
-                            </HeadRow>
-                        </TableHead>
-                        <TableBody>
-                            {listKaryawan?.map((item, i) => (
-                                <BodyRow key={i}>
-                                    <BodyItem start>{item.ref_id}</BodyItem>
-                                    <BodyItem className={'flex items-center gap-2'}>
-                                        <div className="flex items-center w-8 h-8">
-                                            <PhotoView photo={item.photo} />
-                                        </div>
-                                        <h3 className="w-full font-medium text-wrap line-clamp-2">{item.name}</h3>
-                                    </BodyItem>
-                                    <BodyItem>{item.role_name}</BodyItem>
-                                    <BodyItem>{item.phone}</BodyItem>
-                                    <BodyItem end>
-                                        <div className="flex items-center">
-                                            <Tooltip title='detail' arrow>
-                                                <IconButton
-                                                    onClick={() => router.push(`/users-management/karyawan/${item.id}`)}
-                                                >
-                                                    <Icon icon='fluent:document-person-16-filled' className='text-xl' />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title='Jurnal' arrow>
-                                                <IconButton>
-                                                    <Icon icon='solar:clipboard-list-bold' className='text-xl' />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title='Reset PIN' arrow>
-                                                <IconButton
-                                                    onClick={() => handleResetPIN(item.id)}
-                                                >
-                                                    <Icon icon='fluent:key-reset-20-filled' className='text-xl' />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title='Hapus' arrow>
-                                                <IconButton
-                                                    color="error"
-                                                    onClick={() => {
-                                                        setSelectedKaryawan(item)
-                                                        setOpenModalDeleteKaryawan(true)
-                                                    }}
-                                                >
-                                                    <Icon icon='mdi:delete' className='text-xl' />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </div>
-                                    </BodyItem>
-                                </BodyRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                    {!loadingListKaryawan &&
-                        <div className="flex items-center justify-center my-3">
-                            <Pagination
-                                color="primary"
-                                count={totalPage}
-                                page={page}
-                                defaultPage={1}
-                                onChange={(event, value) => setPage(value)}
-                            />
-                        </div>
-                    }
                 </div>
             </Container>
-        </Transition>
+            <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {listKaryawan?.map((item, i) => (
+                    <UserCard
+                        key={i}
+                        user={item}
+                        setSelected={setSelectedKaryawan}
+                        setOpenModalDelete={setOpenModalDeleteKaryawan}
+                        setOpenModalResetPIN={setOpenModalResetPIN}
+                    />
+                ))}
+                {/* <div ref={ref}></div> */}
+                {/* {loadingListKaryawan && Array.from({ length: 8 }).map((_, i) => (
+                    <SkeletonCard key={i} />
+                ))} */}
+            </div>
+            {listKaryawan?.length > 0 && (
+                <div ref={ref}></div>
+            )}
+            {loadingListKaryawan && (
+                <div className="flex justify-center">
+                    <Icon icon='mdi:loading' className='text-3xl animate-spin' />
+                </div>
+            )}
+            {(listKaryawan?.length === 0 && !loadingListKaryawan) &&
+                <h3 className="text-center">Tidak ada data</h3>
+            }
+        </div>
     )
 }
 
 export default KaryawanTab
+
+const UserCard = ({ user, ref = null, setSelected, setOpenModalDelete, setOpenModalResetPIN }) => {
+    return (
+        <Container ref={ref}>
+            <div className="space-y-4 text-sm">
+                <div className="w-12 mx-auto">
+                    <PhotoView photo={user.photo} />
+                </div>
+                <div className="">
+                    <h3 className="font-semibold text-center truncate">{user.name}</h3>
+                    <h3 className="text-xs text-center truncate">{user.role_name}</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                    <div className="p-2 space-y-1 text-xs rounded-xl bg-primary/5">
+                        <h3>ID</h3>
+                        <h3 className="font-medium truncate">{user.ref_id || '-'}</h3>
+                    </div>
+                    <div className="p-2 space-y-1 text-xs rounded-xl bg-primary/5">
+                        <h3>NIK</h3>
+                        <h3 className="font-medium truncate">{user.nik || '-'}</h3>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 mx-auto w-fit">
+                    <Tooltip arrow title='Detil Karyawan'>
+                        <Link href={`/users-management/karyawan/${user.id}`} target="_blank">
+                            <IconButton
+                                size="small"
+                            >
+                                <Icon icon='fluent:document-person-16-filled' />
+                            </IconButton>
+                        </Link>
+                    </Tooltip>
+                    <Tooltip arrow title='Reset PIN'>
+                        <IconButton
+                            size="small"
+                            onClick={() => {
+                                setSelected(user)
+                                setOpenModalResetPIN(true)
+                            }}
+                        >
+                            <Icon icon='fluent:key-reset-20-filled' />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip arrow title='Hapus'>
+                        <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => {
+                                setSelected(user)
+                                setOpenModalDelete(true)
+                            }}
+                        >
+                            <Icon icon='mdi:delete' />
+                        </IconButton>
+                    </Tooltip>
+                </div>
+            </div>
+        </Container>
+    )
+}
+
+const SkeletonCard = () => {
+    return (
+        <Container className={'animate-pulse duration-50'}>
+            <div className="flex flex-col justify-between h-full gap-3">
+                <div className="w-12 h-12 mx-auto bg-gray-300 rounded-full"></div>
+                <div className="space-y-1">
+                    <div className="w-full h-4 bg-gray-300 rounded-lg"></div>
+                    <div className="w-full h-4 bg-gray-300 rounded-lg"></div>
+                </div>
+                <div className="grid h-12 grid-cols-2 gap-3">
+                    <div className="w-full h-full bg-gray-300 rounded-lg"></div>
+                    <div className="w-full h-full bg-gray-300 rounded-lg"></div>
+                </div>
+                <div className="flex items-center gap-2 mx-auto w-fit">
+                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                </div>
+            </div>
+        </Container>
+    )
+}

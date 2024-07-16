@@ -61,9 +61,9 @@ const Login = () => {
   }, [tab])
 
   useEffect(() => {
-    const hasRefreshed = localStorage.getItem('hasRefreshed');
+    const hasRefreshed = localStorage.getItem('hasRefreshed')
     if (!hasRefreshed) {
-      localStorage.setItem('hasRefreshed', 'true');
+      localStorage.setItem('hasRefreshed', 'true')
       window.location.reload();
     }
   }, [])

@@ -110,13 +110,14 @@ export default function FilterUser({
                 handleClickGoToUser={handleClick}
             />
             <div
-                className={`relative bg-white rounded-xl whitespace-nowrap shadow-container h-full w-[86vw] md:w-[50vw] lg:w-[500px]`}
+                className={`relative bg-white rounded-2xl whitespace-nowrap shadow-container h-full w-[86vw] md:w-[50vw] lg:w-[500px]`}
             >
                 <div className="absolute inset-y-0 flex items-center -left-5">
                     <IconButton
+                        color=""
                         onClick={() => setOpen(!open)}
                         variant="contained"
-                        className="text-white bg-primary hover:bg-blue-800"
+                        className="bg-white ring-2 ring-gray-400 hover:bg-gray-100"
                     >
                         <Icon icon="iconamoon:arrow-left-2-bold" className={`duration-500 ${open ? 'rotate-180' : 'rotate-0'}`} />
                     </IconButton>

@@ -164,10 +164,10 @@ const Page = () => {
     ];
 
     const getIcon = (type) => {
-        let icon = 'https://pai.agforce.co.id/assets/user/944629b983ed4d239d0ec968b01198f0.png'
+        let icon = '/onduty/sga-icon.png'
         switch (type) {
             case 'AGP':
-                icon = 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png'
+                icon = '/onduty/agp-icon.png'
                 break;
             default:
                 break;

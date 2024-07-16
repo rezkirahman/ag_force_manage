@@ -1,19 +1,22 @@
 import ModalLayout from "@/components/ModalLayout"
 import { Icon } from "@iconify/react"
-import { Button } from "@mui/material"
+import { Alert, Button } from "@mui/material"
 
-const ModalDeleteConfirmation = ({ open, setOpen, handleDelete, title, description, autoClose = false, loading }) => {
+const ModalResetPINConfirmation = ({ open, setOpen, handle, description, loading }) => {
     return (
         <ModalLayout
             open={open}
             setOpen={setOpen}
-            title={title}
+            title={'Reset PIN'}
             className={'max-w-[400px]'}
             onClose={() => setOpen(false)}
         >
-            <div className="space-y-4" align='center'>
-                <Icon icon='solar:trash-bin-2-bold-duotone' className='text-6xl text-red-600' />
-                <div className="">{description}</div>
+            <div className="space-y-4">
+                <Alert severity="warning">
+                    PIN yang telah direset akan kembali ke PIN default <span className="font-semibold">000000</span>.
+                </Alert>
+                <Icon icon='solar:key-bold-duotone' className='mx-auto text-6xl text-primary' />
+                <div className="text-center">{description}</div>
                 <div className="grid grid-cols-2 gap-3">
                     <Button
                         variant="outlined"
@@ -26,18 +29,12 @@ const ModalDeleteConfirmation = ({ open, setOpen, handleDelete, title, descripti
                     </Button>
                     <Button
                         variant="contained"
-                        color="error"
                         size="large"
-                        onClick={() => {
-                            handleDelete()
-                            if (autoClose) {
-                                setOpen(false)
-                            }
-                        }}
+                        onClick={() => handle()}
                         component="span"
                         disabled={loading}
                     >
-                        {loading ? <Icon icon='mdi:loading' className='text-[27px] animate-spin' /> : 'Hapus'}
+                        {loading ? <Icon icon='mdi:loading' className='text-[27px] animate-spin' /> : 'Reset'}
                     </Button>
                 </div>
             </div>
@@ -46,4 +43,4 @@ const ModalDeleteConfirmation = ({ open, setOpen, handleDelete, title, descripti
 
 }
 
-export default ModalDeleteConfirmation
+export default ModalResetPINConfirmation

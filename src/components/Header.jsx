@@ -1,6 +1,6 @@
 "use client"
 import { Icon } from '@iconify/react'
-import { Button, Drawer, IconButton, Menu } from '@mui/material'
+import { Button, Drawer, IconButton, Menu, Tooltip } from '@mui/material'
 import Image from 'next/image'
 import React, { useState, useEffect, useCallback } from 'react'
 import { MobileNavbar } from './Navbar'
@@ -8,6 +8,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { signOut } from '@/api/auth'
 import { useAppContext } from '@/context'
 import nookies from 'nookies'
+import ModalChangePIN from './ModalChangePIN'
 
 const Header = () => {
     const { user } = useAppContext()
@@ -18,7 +19,7 @@ const Header = () => {
     const openNotification = Boolean(anchorElNotification);
     const image = user?.photo
     const name = user?.full_name
-    const role = user?.is_super_admin_wb ? 'Super Admin' : 'Admin'
+    const role = user?.is_command_center ? 'Super Admin' : 'Admin'
     const pathname = usePathname()
 
     return (
@@ -81,6 +82,7 @@ const Header = () => {
 export default Header
 
 const MenuProfile = ({ anchorEl, open, setAnchorEl, name, photo, role }) => {
+    const [openModalChangePIN, setOpenModalChangePIN] = useState(false)
     const router = useRouter()
 
     const handleSignOut = useCallback(async () => {
@@ -107,15 +109,30 @@ const MenuProfile = ({ anchorEl, open, setAnchorEl, name, photo, role }) => {
                 className: 'menu w-72 mt-2 p-4'
             }}
         >
+            <ModalChangePIN
+                open={openModalChangePIN}
+                setOpen={setOpenModalChangePIN}
+            />
             <div className='space-y-6'>
-                <h3 className='text-base font-semibold'>Profil Pengguna</h3>
+                <div className='flex items-center justify-between gap-4'>
+                    <h3 className='text-base font-semibold'>Profil Pengguna</h3>
+                    <Tooltip arrow title="Ubah PIN">
+                        <IconButton
+                            className='bg-primary/10 hover:bg-primary/20'
+                            color='primary'
+                            onClick={() => setOpenModalChangePIN(true)}
+                        >
+                            <Icon icon='icon-park-twotone:key-one' className='text-lg' />
+                        </IconButton>
+                    </Tooltip>
+                </div>
                 <div className='flex items-center gap-3'>
                     <Image
                         src={photo || 'https://pai.agforce.co.id/assets/user/f35dca8d2f0a4bf6a0da0fc1a113f71d.png'}
                         width={400}
                         height={400}
                         alt='profile'
-                        className='object-cover object-top w-24 h-24 bg-gray-200 rounded-full aspect-square'
+                        className='object-cover object-top w-16 h-16 bg-gray-200 rounded-full md:w-24 md:h-24 aspect-square'
                     />
                     <div className='space-y-1 text-sm'>
                         <h3 className='font-semibold'>{name}</h3>

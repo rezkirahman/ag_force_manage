@@ -21,12 +21,12 @@ const Dashboard = () => {
         const { data } = await dashboardChartDuty(unitKerja.id)
         if (data?.data) {
             setDutyLast({
-                total: data.data.duty_last.map(item => item.total_duty),
-                label: data.data.duty_last.map(item => item.day),
+                total: data.data.duty_last.map(item => item.total_duty).reverse(),
+                label: data.data.duty_last.map(item => item.day).reverse(),
             })
             setDutyMonthly({
-                total: data.data.duty_monthly.map(item => item.total_duty),
-                label: data.data.duty_monthly.map(item => item.day),
+                total: data.data.duty_monthly.map(item => item.total_duty).reverse(),
+                label: data.data.duty_monthly.map(item => item.day).reverse(),
             })
         }
     }, [unitKerja])
@@ -36,12 +36,12 @@ const Dashboard = () => {
         const { data } = await dashboardChartActivity(unitKerja.id)
         if (data?.data) {
             setActivityLast({
-                total: data.data.duty_last.map(item => item.total_activity),
-                label: data.data.duty_last.map(item => item.day),
+                total: data.data.duty_last.map(item => item.total_activity).reverse(),
+                label: data.data.duty_last.map(item => item.day).reverse(),
             })
             setActivityMonthly({
-                total: data.data.duty_monthly.map(item => item.total_activity),
-                label: data.data.duty_monthly.map(item => item.day),
+                total: data.data.duty_monthly.map(item => item.total_activity).reverse(),
+                label: data.data.duty_monthly.map(item => item.day).reverse(),
             })
         }
     }, [unitKerja])

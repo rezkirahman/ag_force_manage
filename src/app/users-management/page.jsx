@@ -1,8 +1,6 @@
 'use client'
-import Container from '@/components/Container'
 import Layout from '@/components/Layout'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Tab, Tabs } from '@mui/material'
 import KaryawanTab from '@/components/users-management/KaryawanTab'
 import KaryawabDiblokirTab from '@/components/users-management/KaryawabDiblokirTab'

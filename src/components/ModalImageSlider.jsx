@@ -12,6 +12,7 @@ const ModalImageSlider = ({ list, open, setOpen, initialImage = "" }) => {
         if (open) {
             setIndexToShow(list?.findIndex(image => image == initialImage))
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialImage, open])
 
     const handlePrev = () => {

@@ -1,11 +1,11 @@
 'use client'
-import { dashboardChartActivity, dashboardChartDuty } from '@/api/dashboard/dashboard';
-import Container from '@/components/Container';
-import Layout from '@/components/Layout';
-import DashboardCarousel from '@/components/dashboard/DashboardCarousel';
-import DashboardChart from '@/components/dashboard/dashboardChart';
-import { useAppContext } from '@/context';
-import React, { useCallback, useEffect, useState } from 'react'
+import { dashboardChartActivity, dashboardChartDuty } from '@/api/dashboard/dashboard'
+import Container from '@/components/Container'
+import Layout from '@/components/Layout'
+import DashboardCarousel from '@/components/dashboard/DashboardCarousel'
+import DashboardChart from '@/components/dashboard/dashboardChart'
+import { useAppContext } from '@/context'
+import { useCallback, useEffect, useState } from 'react'
 
 const Dashboard = () => {
     const { unitKerja } = useAppContext()
@@ -56,7 +56,7 @@ const Dashboard = () => {
 
     return (
         <Layout>
-                <DashboardCarousel />
+            <DashboardCarousel />
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                 <Container>
                     <div className='w-full space-y-3'>

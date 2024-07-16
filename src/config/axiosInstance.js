@@ -7,8 +7,8 @@ export function getAPIServer() {
   const { access_token: token } = parseCookies();
 
   const api = axios.create({
-    // baseURL: "https://hr-dev.agforce.co.id/api",
-     baseURL: "https://hr.agforce.co.id/api",
+    baseURL: "https://hr-dev.agforce.co.id/api",
+    //  baseURL: "https://hr.agforce.co.id/api",
     headers: {
       'Content-type': 'application/json',
     },

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { BodyItem, BodyRow, HeadItem, HeadRow, TableHead, TableBody, Table } from '@/components/Table'
 import Container from '@/components/Container'
 import { useDebounce } from 'use-debounce'
-import { IconButton, InputAdornment, TextField, Tooltip } from '@mui/material'
+import { IconButton, InputAdornment, Pagination, TextField, Tooltip } from '@mui/material'
 import { Icon } from '@iconify/react'
 import { useAppContext } from '@/context'
 import dayjs from 'dayjs'
@@ -13,6 +13,7 @@ import { listAttendance } from '@/api/attendance/attendance'
 import ImageView from '../../ImageView'
 import { isImageLink } from '@/helper/imageLinkChecker'
 import ModalFilterAttendanceOperational from './ModalFilterAttendanceOperational'
+import Link from 'next/link'
 
 const OperasionalTab = () => {
     const { unitKerja } = useAppContext()
@@ -20,7 +21,7 @@ const OperasionalTab = () => {
         location: 0,
         status: 0,
         date: dayjs(),
-        role: 0,
+        role: null,
     })
     const [list, setList] = useState([])
     const [loadingList, setLoadingList] = useState(false)
@@ -30,6 +31,8 @@ const OperasionalTab = () => {
     const [selectedJournal, setSelectedJournal] = useState({})
     const [search, setSearch] = useState('')
     const [searchDebounced] = useDebounce(search, 500)
+    const [page, setPage] = useState(1)
+    const [totalPage, setTotalPage] = useState(1)
 
     const GetStatus = ({ status }) => {
         const bgColor = (status) => {
@@ -57,11 +60,15 @@ const OperasionalTab = () => {
         setLoadingList(true)
         const body = {
             search: searchDebounced,
-            role_id: parseInt(filter?.role?.value) || 0,
+            role_id: filter?.role?.map((item) => parseInt(item?.value)) || [],
             location_id: parseInt(filter?.location?.location_id) || 0,
             status_checkin: filter.status,
             date: filter.date.format("YYYY-MM-DD"),
-            is_shift: false
+            is_shift: false,
+            paginate: {
+                limit: 10,
+                page: page
+            }
         }
         const { data } = await listAttendance({
             unitKerja: unitKerja.id,
@@ -69,10 +76,17 @@ const OperasionalTab = () => {
         })
         if (data?.data) {
             setList(data?.data)
+            setPage(data?.pagination?.current_page)
+            setTotalPage(data?.pagination?.total_pages)
         }
 
         setLoadingList(false)
-    }, [filter, searchDebounced, unitKerja])
+    }, [filter, searchDebounced, unitKerja, page])
+
+    useEffect(() => {
+        setPage(1)
+    }, [filter, unitKerja, searchDebounced])
+
 
     useEffect(() => {
         handleList()
@@ -142,8 +156,8 @@ const OperasionalTab = () => {
                     <TableBody>
                         {list?.map((item, i) => (
                             <BodyRow key={i} className={'align-top'}>
-                                <BodyItem start>{item.ref_id}</BodyItem>
-                                <BodyItem>{item.nik}</BodyItem>
+                                <BodyItem start number>{item.ref_id}</BodyItem>
+                                <BodyItem number>{item.nik}</BodyItem>
                                 <BodyItem>
                                     <Tooltip arrow title={`${item.full_name} - ${item.role_name}`}>
                                         <div className="">
@@ -165,21 +179,29 @@ const OperasionalTab = () => {
                                 </BodyItem>
                                 <BodyItem end>
                                     <Tooltip title='Detail' arrow>
-                                        <IconButton
-                                            size='small'
-                                            onClick={() => {
-                                                setSelectedJournal(item)
-                                                setOpenModalDetail(true)
-                                            }}
-                                        >
-                                            <Icon icon='mdi:eye' className='' />
-                                        </IconButton>
+                                        <Link href={`/users-management/karyawan/${item.user_id}?view=kehadiran`}>
+                                            <IconButton
+                                                size='small'
+                                            >
+                                                <Icon icon='mdi:eye' className='' />
+                                            </IconButton>
+                                        </Link>
                                     </Tooltip>
                                 </BodyItem>
                             </BodyRow>
                         ))}
                     </TableBody>
                 </Table>
+                {list.length > 0 && (
+                    <Pagination
+                        page={page}
+                        count={totalPage}
+                        onChange={(e, value) => setPage(value)}
+                        color='primary'
+                        size='small'
+                        className='mx-auto mt-4 w-fit'
+                    />
+                )}
             </div>
         </Container>
     )

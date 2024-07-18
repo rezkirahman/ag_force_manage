@@ -171,7 +171,7 @@ const KaryawanTab = () => {
                         <h3 className='text-lg font-semibold'>Karyawan</h3>
                         <div className='flex items-center gap-1 px-4 py-2 rounded-full text-primary bg-primary/10 ring-1 ring-inset ring-primary'>
                             <Icon icon={'solar:user-bold'} />
-                            <h3 className='text-xs font-semibold'>{totalUser}</h3>
+                            <h3 className='text-xs font-semibold leading-none'>{totalUser}</h3>
                         </div>
                     </div>
                     <div className="flex items-center justify-end gap-2 grow">

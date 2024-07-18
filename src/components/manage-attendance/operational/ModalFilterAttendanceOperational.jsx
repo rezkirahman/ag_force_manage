@@ -13,7 +13,7 @@ const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) 
     const [date, setDate] = useState(dayjs())
     const [status, setStatus] = useState(0)
     const [selectedRole, setSelectedRole] = useState(null)
-    const [listRole, setListRole] = useState([])
+    const [listRole, setListRole] = useState(null)
     const [selectedLocation, setSelectedLocation] = useState(null)
     const [listLocation, setListLocation] = useState([])
     const [loadingListLocation, setLoadingListLocation] = useState(false)
@@ -31,12 +31,12 @@ const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) 
     const handleReset = () => {
         setFilter({
             date: dayjs(),
-            role: 0,
+            role: null,
             locationId: 0,
             status: 0,
         })
         setDate(dayjs())
-        setSelectedRole([])
+        setSelectedRole(null)
         setStatus(0)
         setOpen(false)
     }
@@ -76,10 +76,10 @@ const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) 
 
     useEffect(() => {
         if (open) {
-            setDate(filter.date)
-            setStatus(filter.status)
-            setSelectedLocation(filter.location)
-            setSelectedRole(filter.role)
+            setDate(filter?.date)
+            setStatus(filter?.status)
+            setSelectedLocation(filter?.location)
+            setSelectedRole(filter?.role)
         }
     }, [open, filter])
 
@@ -91,26 +91,18 @@ const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) 
         >
             <div className='space-y-3 h-[50vh] overflow-y-auto py-2'>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <div className='flex items-center gap-3'>
-                        <DatePicker
-                            label="Mulai"
-                            className='w-full'
-                            value={filter.date}
-                            onChange={(value) => setDate(value)}
-                        />
-                        <div>-</div>
-                        <DatePicker
-                            label="Berakhir"
-                            className='w-full'
-                            value={filter.date}
-                            onChange={(value) => setDate(value)}
-                        />
-                    </div>
+                    <DatePicker
+                        label="Tanggal"
+                        className='w-full'
+                        value={filter.date}
+                        onChange={(value) => setDate(value)}
+                    />
                 </LocalizationProvider>
                 {listRole &&
                     <Autocomplete
-                        disablePortal
-                        value={selectedRole || null}
+                        multiple
+                        disableCloseOnSelect
+                        value={selectedRole || []}
                         onChange={(event, newValue) => setSelectedRole(newValue)}
                         options={listRole || []}
                         getOptionLabel={(option) => option?.label}

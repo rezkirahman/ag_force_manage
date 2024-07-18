@@ -19,3 +19,18 @@ export const roleSuggestion = async (unitKerja, body) => {
     })
 
 }
+
+export const divisionSuggestion = async ({ unitKerja }) => {
+    const signature = MakeSignatureHeader(`/api/v1/users/direktorat/suggest`, 'GET', '{}')
+    return await api.get(`/v1/users/direktorat/suggest`, {
+        headers: {
+            ...signature,
+            'X-Unit-Kerja': unitKerja
+        }
+    }).then((response) => {
+        return response
+    }).catch((error) => {
+        console.error(error)
+        return error
+    })
+}

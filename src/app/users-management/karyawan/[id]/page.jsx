@@ -7,11 +7,15 @@ import InformasiTab from "@/components/users-management/informasi/InformasiTab"
 import { useAppContext } from "@/context"
 import { informationProfile } from "@/api/users-management/profiling"
 import ModalChangePhotoProfiling from "@/components/users-management/informasi/modal-edit/ModalChangePhotoProfiling"
+import { useSearchParams } from "next/navigation"
+import KehadiranTab from "@/components/users-management/kehadiran/kehadiranTab"
 
 const Page = ({ params }) => {
+    const searchParams = useSearchParams()
+    const view = searchParams.get('view')
     const userId = params.id
     const { unitKerja, setOpenSnackbar } = useAppContext()
-    const [tab, setTab] = useState('informasi')
+    const [tab, setTab] = useState(view || 'informasi')
     const [isNotLoaded, setIsNotLoaded] = useState(false)
     const [selectedMenuInformasi, setSelectedMenuInformasi] = useState({
         id: 1,
@@ -23,7 +27,6 @@ const Page = ({ params }) => {
     const [jabatan, setJabatan] = useState([])
     const [profile, setProfile] = useState({})
     const [openModalChangePhoto, setOpenModalChangePhoto] = useState(false)
-
 
     const handleGetInformasiKaryawan = useCallback(async () => {
         if (!unitKerja) return
@@ -49,9 +52,24 @@ const Page = ({ params }) => {
         }
     }, [setOpenSnackbar, unitKerja, userId])
 
+    const tabComponents = {
+        informasi: <InformasiTab
+            profile={profile}
+            refresh={handleGetInformasiKaryawan}
+            selectedMenu={selectedMenuInformasi}
+            setSelectedMenu={setSelectedMenuInformasi}
+        />,
+        kehadiran: <KehadiranTab name={name} />,
+        jurnal: <KehadiranTab />,
+        aktivitas: 'activity',
+        cutiIzin: "-"
+
+    };
+
     useEffect(() => {
         handleGetInformasiKaryawan()
     }, [handleGetInformasiKaryawan])
+
     return (
         <Layout>
             <ModalChangePhotoProfiling
@@ -63,14 +81,7 @@ const Page = ({ params }) => {
             <div className="text-sm bg-white bg-center rounded-2xl shadow-container overflow-clip">
                 <div className="relative w-full h-20 md:h-40 bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1552152370-fb05b25ff17d?q=80&w=869&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]">
                     <div className="absolute inset-x-auto flex items-center justify-center w-full -bottom-6">
-                        <div
-                            // style={{
-                            //     padding: '4px',
-                            //     borderRadius: '9999px',
-                            //     background: 'linear-gradient(#e68a8a, #b266ff)'
-                            // }}
-                            className="relative p-1 rounded-full bg-gradient-to-t from-red-400 to-purple-400"
-                        >
+                        <div className="relative p-1 rounded-full bg-gradient-to-t from-red-400 to-purple-400">
                             <IconButton
                                 className="absolute inset-0"
                                 onClick={() => setOpenModalChangePhoto(true)}
@@ -109,22 +120,16 @@ const Page = ({ params }) => {
                         <Tab label='Jurnal' value={'jurnal'} />
                         <Tab label='Kehadiran' value={'kehadiran'} />
                         <Tab label='Aktivitas' value={'aktivitas'} />
-                        <Tab label='Cuti & Izin' value={'cuti & izin'} />
+                        <Tab label='Cuti & Izin' value={'cutiIzin'} />
                     </Tabs>
                 </div>
             </div>
-            {isNotLoaded ? (
+            {isNotLoaded ?
                 <h3 className="text-center">Data tidak ditemukan</h3>
-            ) :
-                tab === 'informasi' && (
-                    <InformasiTab
-                        profile={profile}
-                        refresh={handleGetInformasiKaryawan}
-                        selectedMenu={selectedMenuInformasi}
-                        setSelectedMenu={setSelectedMenuInformasi}
-                    />
-                )
-            }
+                :
+                <div>{tabComponents[tab]}</div>}
+
+            <KehadiranTab />
         </Layout>
     )
 }

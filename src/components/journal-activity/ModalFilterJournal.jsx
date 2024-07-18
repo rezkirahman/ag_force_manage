@@ -67,21 +67,12 @@ const ModalFilterJournal = ({ open, setOpen, filter, setFilter }) => {
         >
             <div className='space-y-3 h-[50vh] overflow-y-auto py-2'>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <div className='flex items-center gap-3'>
-                        <DatePicker
-                            label="Mulai"
-                            className='w-full'
-                            value={filter.date}
-                            onChange={(value) => setDate(value)}
-                        />
-                        <div>-</div>
-                        <DatePicker
-                            label="Berakhir"
-                            className='w-full'
-                            value={filter.date}
-                            onChange={(value) => setDate(value)}
-                        />
-                    </div>
+                    <DatePicker
+                        label="Mulai"
+                        className='w-full'
+                        value={filter.date}
+                        onChange={(value) => setDate(value)}
+                    />
                 </LocalizationProvider>
                 <Autocomplete
                     disablePortal

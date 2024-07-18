@@ -1,4 +1,6 @@
 import { Icon } from '@iconify/react'
+import { Tooltip } from '@mui/material'
+
 import React from 'react'
 
 export const Table = ({ children, className, loading = false, list }) => {
@@ -61,11 +63,22 @@ export const BodyRow = ({ children, className }) => {
     )
 }
 
-export const BodyItem = ({ children, className, start, end }) => {
+export const BodyItem = ({ children, className, start, end, number }) => {
     const marginx = start ? 'pr-2 md:pr-6' : end ? 'pl-2 md:pl-6' : 'px-2 md:px-6'
-    return (
-        <td className={`py-2 ${marginx} ${className}`}>
-            {children}
-        </td>
-    )
+    if (number) {
+        return (
+            <td className={`py-2 ${marginx} ${className}`}>
+                <Tooltip title={children} arrow>
+                    <h3 className='max-w-[56px] truncate'>{children || '-'}</h3>
+                </Tooltip>
+            </td>
+        )
+    } else {
+        return (
+            <td className={`py-2 ${marginx} ${className}`}>
+                {children}
+            </td>
+        )
+    }
+
 }

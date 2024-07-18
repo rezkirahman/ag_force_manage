@@ -113,7 +113,7 @@ const MenuProfile = ({ anchorEl, open, setAnchorEl, name, photo, role }) => {
                 open={openModalChangePIN}
                 setOpen={setOpenModalChangePIN}
             />
-            <div className='space-y-6'>
+            <div className='space-y-6 text-gray-600'>
                 <div className='flex items-center justify-between gap-4'>
                     <h3 className='text-base font-semibold'>Profil Pengguna</h3>
                     <Tooltip arrow title="Ubah PIN">
@@ -173,7 +173,7 @@ const MenuNotification = ({ anchorEl, open, setAnchorEl }) => {
                 className: 'menu p-4 w-72 mt-2 p-4'
             }}
         >
-            <div className='space-y-4'>
+            <div className='space-y-4 text-gray-600'>
                 <div className='flex items-center justify-between'>
                     <h3 className='text-base font-semibold'>Notifikasi</h3>
                     <div className='px-3 py-2 rounded-full bg-primary'>

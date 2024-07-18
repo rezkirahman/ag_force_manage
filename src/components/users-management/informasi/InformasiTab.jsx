@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, IconButton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { Icon } from '@iconify/react'
 import InformasiNavigation from './InformasiNavigation'
 import ImageView from '@/components/ImageView'

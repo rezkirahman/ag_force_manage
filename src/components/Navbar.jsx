@@ -31,7 +31,7 @@ const Navbar = () => {
     useEffect(() => {
         const currentMenu = menu.find(item => pathname.includes(item.route));
         if (currentMenu) {
-            document.title = `${currentMenu.feature_name} | AG Force`
+            document.title = `${currentMenu.feature_name} - AG Force`
         }
     }, [menu, pathname])
 

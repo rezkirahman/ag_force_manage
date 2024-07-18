@@ -38,8 +38,8 @@ const PhotoView = ({ photo }) => {
                 <Image
                     alt='photoview'
                     src={preview}
-                    width={1000}
-                    height={1000}
+                    width={100}
+                    height={100}
                     className='relative object-cover object-top w-full rounded-full aspect-square bg-slate-100'
                     priority
                 />

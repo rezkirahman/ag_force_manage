@@ -5,7 +5,7 @@ import { useAppContext } from "@/context"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import dayjs from "dayjs"
-import { roleSuggestion } from "@/api/role"
+import { divisionSuggestion, roleSuggestion } from "@/api/role"
 import { Icon } from "@iconify/react"
 import { createUser } from "@/api/users-management/users"
 import ErrorMessage from "../ErrorMessage"
@@ -18,10 +18,12 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
     const [phone, setPhone] = useState('')
     const [Email, setEmail] = useState('')
     const [gender, setGender] = useState('male')
-    const [birthDate, setBirthDate] = useState(dayjs())
-    const [jabatan, setJabatan] = useState({})
+    const [birthDate, setBirthDate] = useState(dayjs('06/06/1999'))
+    const [joinDate, setJoinDate] = useState(dayjs())
+    const [jabatan, setJabatan] = useState(null)
     const [listRole, setListRole] = useState([])
-    const [loadingListRole, setLoadingListRole] = useState(false)
+    const [listDivision, setListDivision] = useState([])
+    const [selectedDivision, setSelectedDivision] = useState(null)
     const [loadingCreateKaryawan, setLoadingCreateKaryawan] = useState(false)
     const [isReadySubmit, setIsReadySubmit] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
@@ -34,10 +36,12 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
             name: Nama,
             email: Email,
             phone: phone,
-            role_id: Number(jabatan?.value),
+            role_id: parseInt(jabatan?.value),
             gender: gender,
             birth_date: dayjs(birthDate).format('YYYY-MM-DD'),
-            reference_id: ID
+            reference_id: ID,
+            divisi_id: selectedDivision?.id || 0,
+            join_date: joinDate ? dayjs(joinDate).format('YYYY-MM-DD') : '',
         }
         const response = await createUser(unitKerja.id, body)
         const { data } = response
@@ -47,17 +51,16 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                 message: 'Karyawan berhasil ditambahkan',
                 severity: 'success'
             })
-            setOpen(false)
             refresh()
+            setOpen(false)
         } else {
             setErrorMessage(response?.response?.data?.message?.description)
         }
         setLoadingCreateKaryawan(false)
-    }, [unitKerja, Nama, Email, phone, jabatan, gender, birthDate, ID, setOpenSnackbar, setOpen, refresh])
+    }, [unitKerja, Nama, Email, phone, jabatan, gender, birthDate, ID, selectedDivision, joinDate, setOpenSnackbar, setOpen, refresh])
 
     const handleListRole = useCallback(async () => {
         if (!unitKerja) return
-        setLoadingListRole(true)
         const body = {
             limit: 1000,
             page: 1,
@@ -67,11 +70,20 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
         if (data?.data) {
             setListRole(data?.data)
         }
-        setLoadingListRole(false)
+    }, [unitKerja])
+
+    const handleListDivision = useCallback(async () => {
+        if (!unitKerja) return
+        const { data } = await divisionSuggestion({
+            unitKerja: unitKerja.id,
+        })
+        if (data?.data) {
+            setListDivision(data?.data)
+        }
     }, [unitKerja])
 
     useEffect(() => {
-        if (Nama && Email && jabatan && birthDate && phone &&gender) {
+        if (Nama && Email && jabatan && birthDate && phone && gender) {
             setIsReadySubmit(true)
         } else {
             setIsReadySubmit(false)
@@ -80,13 +92,17 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
 
     useEffect(() => {
         if (open) {
+            setJabatan(null)
+            setSelectedDivision(null)
             handleListRole()
+            handleListDivision()
             setID('')
             setNama('')
+            setNik('')
             setPhone('')
             setEmail('')
         }
-    }, [handleListRole, open])
+    }, [handleListDivision, handleListRole, open])
 
     return (
         <ModalLayout
@@ -100,7 +116,7 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                         message={errorMessage}
                         setMessage={setErrorMessage}
                     />
-                    <div className="max-h-[50vh] overflow-y-auto py-2 space-y-4">
+                    <div className="max-h-[50vh] overflow-y-auto py-2 space-y-4 pr-2">
                         <TextField
                             label="ID"
                             value={ID}
@@ -123,12 +139,14 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                         <TextField
                             label="Nomor Telepon"
                             value={phone}
+                            maxlength={15}
                             onChange={(e) => {
-                                const re = /^[+]?[0-9\b]+$/;
-                                if (e.target.value === '' || re.test(e.target.value)) {
-                                    setPhone(e.target.value);
+                                const re = /^[0-9\b]+$/;
+                                if ((e.target.value === '' || re.test(e.target.value)) && e.target.value.length <= 15) {
+                                    setPhone(e.target.value)
                                 }
                             }}
+                            placeholder="08123456789"
                             fullWidth
                         />
                         <TextField
@@ -158,16 +176,36 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                                 onChange={(newValue) => setBirthDate(newValue)}
                             />
                         </LocalizationProvider>
-                        <Autocomplete
-                            disablePortal
-                            loading={loadingListRole}
-                            value={jabatan?.name}
-                            onChange={(event, newValue) => { setJabatan(newValue) }}
-                            options={listRole}
-                            className="w-full"
-                            renderInput={(params) => <TextField {...params} label="Jabatan" />}
-                        />
-
+                        {listRole.length > 0 && (
+                            <Autocomplete
+                                disablePortal
+                                value={jabatan}
+                                onChange={(event, newValue) => { setJabatan(newValue) }}
+                                options={listRole}
+                                getOptionLabel={(option) => option?.label}
+                                className="w-full"
+                                renderInput={(params) => <TextField {...params} label="Jabatan" />}
+                            />
+                        )}
+                        {listDivision.length > 0 && (
+                            <Autocomplete
+                                disablePortal
+                                value={selectedDivision}
+                                onChange={(event, newValue) => { setSelectedDivision(newValue) }}
+                                options={listDivision}
+                                getOptionLabel={(option) => option?.join_direktorat}
+                                className="w-full"
+                                renderInput={(params) => <TextField {...params} label="Direktorat - Subdirektorat" />}
+                            />
+                        )}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                className="w-full"
+                                label="Tanggal Bergabung (MM/DD/YYYY)"
+                                value={joinDate}
+                                onChange={(newValue) => setJoinDate(newValue)}
+                            />
+                        </LocalizationProvider>
                     </div>
                     <div className="flex justify-end">
                         <Button

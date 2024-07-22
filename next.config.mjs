@@ -27,6 +27,10 @@ const nextConfig = {
                 hostname:'cdn.agforce.co.id',
             },
             {
+                protocol:'http',
+                hostname:'cdn.agforce.co.id',
+            },
+            {
                 protocol:'https',
                 hostname:'eas-tech.net',
             },

@@ -235,11 +235,11 @@ const Page = () => {
                                 <div className="flex items-center gap-5">
                                     <DatePicker
                                         label="Mulai"
-                                        // value={startBackdate ? dayjs(startBackdate, 'YYYY-MM-DD HH:mm') : startBackdate}
                                         value={startBackdate ? dayjs(startBackdate) : ''}
                                         onChange={(newValue) => setStartBackdate(newValue)}
                                         className="w-full"
                                         disabled={checkedBackDate ? undefined : true}
+                                        format='DD MMM YYYY'
                                     />
                                     <div className={`${checkedBackDate && checkedBatasBackDate ? "w-8" : "sr-only"} bg-gray-500 h-[2px] rounded-full`}></div>
                                     <DatePicker
@@ -248,6 +248,7 @@ const Page = () => {
                                         onChange={(newValue) => setEndBackdate(newValue)}
                                         className={`${checkedBackDate && checkedBatasBackDate ? "w-full" : "w-0 sr-only"}`}
                                         disabled={!(checkedBatasBackDate && checkedBackDate)}
+                                        format='DD MMM YYYY'
                                     />
                                 </div>
                             </LocalizationProvider>

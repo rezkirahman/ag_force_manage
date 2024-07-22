@@ -72,6 +72,7 @@ const ModalFilterJournal = ({ open, setOpen, filter, setFilter }) => {
                         className='w-full'
                         value={filter.date}
                         onChange={(value) => setDate(value)}
+                        format='DD MMMM YYYY'
                     />
                 </LocalizationProvider>
                 <Autocomplete

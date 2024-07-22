@@ -146,6 +146,7 @@ const ModalEditPribadi = ({ open, setOpen, refresh, title, data }) => {
                         value={tanggalLahir}
                         onChange={(e) => setTanggalLahir(e)}
                         className='md:col-span-2'
+                        format="DD MMM YYYY"
                     />
                     <TextField
                         label="Shio"

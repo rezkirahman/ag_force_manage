@@ -72,6 +72,7 @@ const ModalExportJournal = ({ open, setOpen }) => {
                             className='w-full'
                             value={startDate}
                             onChange={(value) => setStartDate(value)}
+                            format='DD MMM YYYY'
                         />
                         <div>-</div>
                         <DatePicker
@@ -79,6 +80,7 @@ const ModalExportJournal = ({ open, setOpen }) => {
                             className='w-full'
                             value={endDate}
                             onChange={(value) => setEndDate(value)}
+                            format='DD MMM YYYY'
                         />
                     </div>
                 </LocalizationProvider>

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { BodyItem, BodyRow, HeadItem, HeadRow, TableHead, TableBody, Table } from '@/components/Table'
 import Container from '@/components/Container'
 import { useDebounce } from 'use-debounce'
-import { IconButton, InputAdornment, Pagination, TextField, Tooltip } from '@mui/material'
+import { Button, IconButton, InputAdornment, Pagination, TextField, Tooltip } from '@mui/material'
 import { Icon } from '@iconify/react'
 import { useAppContext } from '@/context'
 import dayjs from 'dayjs'
@@ -122,14 +122,15 @@ const OperasionalTab = () => {
                                 startAdornment: <InputAdornment position="start"><Icon icon={'material-symbols:search'} /></InputAdornment>,
                             }}
                         />
-                        <Tooltip title='Filter' arrow>
-                            <IconButton
-                                size='large'
-                                onClick={() => setOpenModalFilter(true)}
-                            >
-                                <Icon icon="mage:filter-fill" />
-                            </IconButton>
-                        </Tooltip>
+                        <Button
+                        size='large'
+                        variant='contained'
+                        color='primary'
+                        onClick={() => setOpenModalFilter(true)}
+                        startIcon={<Icon icon="mage:filter-fill" />}
+                    >
+                        Filter
+                    </Button>
                         <Tooltip title='Unduh' arrow>
                             <IconButton
                                 color='primary'
@@ -167,7 +168,7 @@ const OperasionalTab = () => {
                                     </Tooltip>
                                 </BodyItem>
                                 <BodyItem>
-                                    <h3 className='line-clamp-2'><GetStatus status={item.status_check_in} /></h3>
+                                    <GetStatus status={item.status_check_in} />
                                 </BodyItem>
                                 <BodyItem>
                                     {isImageLink(item.picture) ?

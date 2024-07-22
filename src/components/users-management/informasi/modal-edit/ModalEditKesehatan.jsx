@@ -391,6 +391,7 @@ const Vaccines = ({ vaccines, setVaccines }) => {
                                 value={dayjs(data.tanggal, 'DD/MM/YYYY')}
                                 onChange={(newValue) => handleVaccineChange(index, 'tanggal', dayjs(newValue).format('DD/MM/YYYY'))}
                                 className='w-full'
+                                format="DD MMM YYYY"
                             />
                         </LocalizationProvider>
                     </div>

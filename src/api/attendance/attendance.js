@@ -61,3 +61,18 @@ export const suggestLocationAttendance = async ({ unitKerja }) => {
         return error
     })
 }
+
+export const detailAttendance = async ({ unitKerja, id, body }) => {
+    const stringBody = JSON.stringify(body)
+    const signature = MakeSignatureHeader(`/api/v1/attendance/detail/${id}`, 'POST', stringBody)
+    return await api.post(`/v1/attendance/detail/${id}`, stringBody, {
+        headers: {
+            ...signature,
+            'X-Unit-Kerja': unitKerja
+        }
+    }).then((response) => {
+        return response
+    }).catch((error) => {
+        return error
+    })
+}

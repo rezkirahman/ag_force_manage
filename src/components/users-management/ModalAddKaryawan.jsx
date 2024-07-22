@@ -174,6 +174,7 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                                 label="Tanggal Lahir (MM/DD/YYYY)"
                                 value={birthDate}
                                 onChange={(newValue) => setBirthDate(newValue)}
+                                format="DD MMM YYYY"
                             />
                         </LocalizationProvider>
                         {listRole.length > 0 && (
@@ -204,6 +205,7 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                                 label="Tanggal Bergabung (MM/DD/YYYY)"
                                 value={joinDate}
                                 onChange={(newValue) => setJoinDate(newValue)}
+                                format="DD MMM YYYY"
                             />
                         </LocalizationProvider>
                     </div>

@@ -32,7 +32,7 @@ export const TableHead = ({ children }) => {
 
 export const HeadRow = ({ children, className }) => {
     return (
-        <tr className={`rounded-xl ${className}`}>
+        <tr className={`rounded-xl ${className} text-xs uppercase`}>
             {children}
         </tr>
     )

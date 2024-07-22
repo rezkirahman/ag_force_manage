@@ -8,7 +8,8 @@ import { useAppContext } from "@/context"
 import { informationProfile } from "@/api/users-management/profiling"
 import ModalChangePhotoProfiling from "@/components/users-management/informasi/modal-edit/ModalChangePhotoProfiling"
 import { useSearchParams } from "next/navigation"
-import KehadiranTab from "@/components/users-management/kehadiran/kehadiranTab"
+import KehadiranTab from "@/components/users-management/kehadiran/KehadiranTab"
+import JurnalTab from "@/components/users-management/jurnal/JurnalTab"
 
 const Page = ({ params }) => {
     const searchParams = useSearchParams()
@@ -59,8 +60,8 @@ const Page = ({ params }) => {
             selectedMenu={selectedMenuInformasi}
             setSelectedMenu={setSelectedMenuInformasi}
         />,
-        kehadiran: <KehadiranTab name={name} />,
-        jurnal: <KehadiranTab />,
+        kehadiran: <KehadiranTab />,
+        jurnal: <JurnalTab />,
         aktivitas: 'activity',
         cutiIzin: "-"
 
@@ -128,8 +129,6 @@ const Page = ({ params }) => {
                 <h3 className="text-center">Data tidak ditemukan</h3>
                 :
                 <div>{tabComponents[tab]}</div>}
-
-            <KehadiranTab />
         </Layout>
     )
 }

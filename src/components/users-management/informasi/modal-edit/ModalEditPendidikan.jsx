@@ -179,6 +179,7 @@ const RiwayatPendidikan = ({ items, setItems }) => {
                                 value={dayjs(data.tahun_lulus, 'YYYY')}
                                 onChange={(date) => handleItemChange(index, 'tahun_lulus', date.format('YYYY'))}
                                 className="w-full"
+                                format="DD MMM YYYY"
                             />
                         </LocalizationProvider>
                         <TextField

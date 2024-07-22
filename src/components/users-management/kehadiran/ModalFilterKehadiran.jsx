@@ -5,23 +5,20 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material'
 import dayjs from 'dayjs'
 import { useAppContext } from '@/context'
-import { roleSuggestion } from '@/api/role'
 import { suggestLocationAttendance } from '@/api/attendance/attendance'
 
-const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) => {
+const ModalFilterKehadiran = ({ open, setOpen, filter, setFilter }) => {
     const { unitKerja } = useAppContext()
-    const [date, setDate] = useState(dayjs())
+    const [startDate, setStartDate] = useState(dayjs().startOf('month'))
+    const [endDate, setEndDate] = useState(dayjs())
     const [status, setStatus] = useState(0)
-    const [selectedRole, setSelectedRole] = useState(null)
-    const [listRole, setListRole] = useState(null)
     const [selectedLocation, setSelectedLocation] = useState(null)
     const [listLocation, setListLocation] = useState([])
-    const [loadingListLocation, setLoadingListLocation] = useState(false)
 
     const handleSubmit = () => {
         setFilter({
-            date: date,
-            role: selectedRole,
+            starDate: startDate,
+            endDate: endDate,
             status: status,
             location: selectedLocation
         })
@@ -30,29 +27,13 @@ const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) 
 
     const handleReset = () => {
         setFilter({
-            date: dayjs(),
-            role: null,
-            locationId: 0,
+            starDate: dayjs().startOf('month'),
+            endDate: dayjs(),
+            location: 0,
             status: 0,
         })
-        setDate(dayjs())
-        setSelectedRole(null)
-        setStatus(0)
         setOpen(false)
     }
-
-    const handleListRole = useCallback(async () => {
-        if (!unitKerja) return
-        const body = {
-            limit: 1000,
-            page: 1,
-            search: ''
-        }
-        const { data } = await roleSuggestion(unitKerja.id, body)
-        if (data?.data) {
-            setListRole(data?.data)
-        }
-    }, [unitKerja])
 
     const handleListLocation = useCallback(async () => {
         if (!unitKerja) return
@@ -64,22 +45,16 @@ const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) 
 
     useEffect(() => {
         if (open) {
-            handleListRole()
-        }
-    }, [handleListRole, open])
-
-    useEffect(() => {
-        if (open) {
             handleListLocation()
         }
     }, [handleListLocation, open])
 
     useEffect(() => {
         if (open) {
-            setDate(filter?.date)
-            setStatus(filter?.status)
-            setSelectedLocation(filter?.location)
-            setSelectedRole(filter?.role)
+            setStartDate(filter.starDate)
+            setEndDate(filter.endDate)
+            setStatus(filter.status)
+            setSelectedLocation(filter.location)
         }
     }, [open, filter])
 
@@ -87,37 +62,31 @@ const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) 
         <ModalLayout
             open={open}
             setOpen={setOpen}
-            title="Filter"
+            title="Filter Kehadiran"
         >
             <div className='space-y-3 h-[50vh] overflow-y-auto py-2'>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                        label="Tanggal"
-                        className='w-full'
-                        value={filter.date}
-                        onChange={(value) => setDate(value)}
-                        format='DD MMM YYYY'
-                    />
+                    <div className='flex items-center gap-3'>
+                        <DatePicker
+                            label="Awal"
+                            className='w-full'
+                            value={startDate}
+                            onChange={(value) => setStartDate(value)}
+                            disableFuture
+                            format='DD MMM YYYY'
+                        />
+                        <div>-</div>
+                        <DatePicker
+                            label="Akhir"
+                            className='w-full'
+                            value={endDate}
+                            onChange={(value) => setEndDate(value)}
+                            disableFuture
+                            format='DD MMM YYYY'
+                        />
+
+                    </div>
                 </LocalizationProvider>
-                {listRole &&
-                    <Autocomplete
-                        multiple
-                        disableCloseOnSelect
-                        value={selectedRole || []}
-                        onChange={(event, newValue) => setSelectedRole(newValue)}
-                        options={listRole || []}
-                        getOptionLabel={(option) => option?.label}
-                        isOptionEqualToValue={(option, value) => option?.value === value?.value}
-                        className="w-full"
-                        renderInput={(params) =>
-                            <TextField
-                                {...params}
-                                label="Jabatan"
-                                helperText="Kosongkan untuk mendapatkan seluruh jabatan"
-                            />
-                        }
-                    />
-                }
                 {listLocation &&
                     <Autocomplete
                         disablePortal
@@ -168,4 +137,4 @@ const ModalFilterAttendanceOperational = ({ open, setOpen, filter, setFilter }) 
     )
 }
 
-export default ModalFilterAttendanceOperational
+export default ModalFilterKehadiran

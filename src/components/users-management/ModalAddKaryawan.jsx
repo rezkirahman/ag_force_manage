@@ -139,7 +139,7 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                         <TextField
                             label="Nomor Telepon"
                             value={phone}
-                            maxlength={15}
+                            maxLength={15}
                             onChange={(e) => {
                                 const re = /^[0-9\b]+$/;
                                 if ((e.target.value === '' || re.test(e.target.value)) && e.target.value.length <= 15) {
@@ -171,10 +171,10 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                                 className="w-full"
-                                label="Tanggal Lahir (MM/DD/YYYY)"
+                                label="Tanggal Lahir"
                                 value={birthDate}
                                 onChange={(newValue) => setBirthDate(newValue)}
-                                format="DD MMM YYYY"
+                                format="DD/MM/YYYY"
                             />
                         </LocalizationProvider>
                         {listRole.length > 0 && (
@@ -202,10 +202,10 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                                 className="w-full"
-                                label="Tanggal Bergabung (MM/DD/YYYY)"
+                                label="Tanggal Bergabung"
                                 value={joinDate}
                                 onChange={(newValue) => setJoinDate(newValue)}
-                                format="DD MMM YYYY"
+                                format="DD/MM/YYYY"
                             />
                         </LocalizationProvider>
                     </div>

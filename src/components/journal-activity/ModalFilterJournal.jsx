@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import ModalLayout from '../ModalLayout'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { Autocomplete, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material'
+import { Autocomplete, Button, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material'
 import dayjs from 'dayjs'
 import { useAppContext } from '@/context'
 import { roleSuggestion } from '@/api/role'
@@ -12,8 +12,7 @@ const ModalFilterJournal = ({ open, setOpen, filter, setFilter }) => {
     const [date, setDate] = useState(dayjs())
     const [selectedRole, setSelectedRole] = useState([])
     const [listRole, setListRole] = useState([])
-    const [loadingListRole, setLoadingListRole] = useState(false)
-    const [status, setStatus] = useState(false)
+    const [status, setStatus] = useState(0)
     const [category, setCategory] = useState([])
 
     const handleSubmit = () => {
@@ -42,7 +41,6 @@ const ModalFilterJournal = ({ open, setOpen, filter, setFilter }) => {
 
     const handleListRole = useCallback(async () => {
         if (!unitKerja) return
-        setLoadingListRole(true)
         const body = {
             limit: 1000,
             page: 1,
@@ -52,7 +50,6 @@ const ModalFilterJournal = ({ open, setOpen, filter, setFilter }) => {
         if (data?.data) {
             setListRole(data?.data)
         }
-        setLoadingListRole(false)
     }, [unitKerja])
 
     useEffect(() => {
@@ -75,25 +72,25 @@ const ModalFilterJournal = ({ open, setOpen, filter, setFilter }) => {
                         format='DD MMMM YYYY'
                     />
                 </LocalizationProvider>
-                <Autocomplete
-                    disablePortal
-                    disableCloseOnSelect
-                    multiple
-                    loading={loadingListRole}
-                    value={selectedRole}
-                    onChange={(event, newValue) => { setSelectedRole(newValue) }}
-                    options={listRole}
-                    getOptionLabel={(option) => option?.label}
-                    isOptionEqualToValue={(option, value) => option?.value === value?.value}
-                    className="w-full"
-                    renderInput={(params) =>
-                        <TextField
-                            {...params}
-                            label="Jabatan"
-                            helperText="Kosongkan untuk mendapatkan seluruh jabatan"
-                        />
-                    }
-                />
+                {listRole.length > 0 && (
+                    <Autocomplete
+                        disablePortal
+                        disableCloseOnSelect
+                        multiple
+                        value={selectedRole}
+                        onChange={(event, newValue) => { setSelectedRole(newValue) }}
+                        options={listRole}
+                        getOptionLabel={(option) => option?.label}
+                        className="w-full"
+                        renderInput={(params) =>
+                            <TextField
+                                {...params}
+                                label="Jabatan"
+                                helperText="Kosongkan untuk mendapatkan seluruh jabatan"
+                            />
+                        }
+                    />
+                )}
                 <FormControl fullWidth>
                     <InputLabel>Status</InputLabel>
                     <Select
@@ -102,8 +99,8 @@ const ModalFilterJournal = ({ open, setOpen, filter, setFilter }) => {
                         onChange={(e) => setStatus(e.target.value)}
                     >
                         <MenuItem value={0}>Semua</MenuItem>
-                        <MenuItem value={true}>Jurnal Terisi</MenuItem>
-                        <MenuItem value={false}>Jurnal Kosong</MenuItem>
+                        <MenuItem value={1}>Jurnal Terisi</MenuItem>
+                        <MenuItem value={2}>Jurnal Kosong</MenuItem>
                     </Select>
                 </FormControl>
                 <FormControl fullWidth>
@@ -114,10 +111,11 @@ const ModalFilterJournal = ({ open, setOpen, filter, setFilter }) => {
                         onChange={(e) => setCategory(e.target.value)}
                         input={<OutlinedInput label="Kategori Persetujuan" />}
                     >
-                        <MenuItem value={'disetujui'} key={'disetujui'}>Disetujui</MenuItem>
-                        <MenuItem value={'ditolak'} key={'ditolak'}>Ditolak</MenuItem>
-                        <MenuItem value={'menunggu'} key={'menunggu'}>Menunggu</MenuItem>
+                        <MenuItem value={0} key={'menunggu'}>Menunggu</MenuItem>
+                        <MenuItem value={1} key={'disetujui'}>Disetujui</MenuItem>
+                        <MenuItem value={2} key={'ditolak'}>Ditolak</MenuItem>
                     </Select>
+                    <FormHelperText>Dapat dipilih lebih dari satu</FormHelperText>
                 </FormControl>
             </div>
             <div className='grid grid-cols-2 gap-3'>

@@ -42,6 +42,14 @@ const nextConfig = {
                 protocol:'https',
                 hostname:'pai-dev.agforce.co.id',
             },
+            {
+                protocol:'https',
+                hostname:'images.pexels.com',
+            },
+            {
+                protocol:'https',
+                hostname:'cdn.discordapp.com',
+            }
         ]
     },
 };

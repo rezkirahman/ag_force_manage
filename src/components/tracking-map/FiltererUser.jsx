@@ -98,7 +98,7 @@ export default function FilterUser({
     }, [handleListPenugasan])
 
     return (
-        <div className={`fixed top-0 right-6 z-10 h-screen pt-24 py-6 w-auto transition-all duration-500 ${open ? 'translate-x-0 pl-6 md:pl-0' : 'translate-x-full'}`}>
+        <div className={`fixed top-0 right-6 z-20 h-screen pt-24 py-6 w-auto transition-all duration-500 ${open ? 'translate-x-0 pl-6 md:pl-0' : 'translate-x-full'}`}>
             <ModalPenugasanTracking
                 open={openModalPenugasan}
                 setOpen={setOpenModalPenugasan}
@@ -114,10 +114,10 @@ export default function FilterUser({
             >
                 <div className="absolute inset-y-0 flex items-center -left-5">
                     <IconButton
-                        color=""
+                        color="inherit"
                         onClick={() => setOpen(!open)}
                         variant="contained"
-                        className="bg-white ring-2 ring-gray-400 hover:bg-gray-100"
+                        className="bg-white ring-2 ring-gray-200 hover:bg-gray-100"
                     >
                         <Icon icon="iconamoon:arrow-left-2-bold" className={`duration-500 ${open ? 'rotate-180' : 'rotate-0'}`} />
                     </IconButton>
@@ -158,9 +158,9 @@ export default function FilterUser({
                                             className="px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100"
                                             onClick={() => handleClick(item)}
                                         >
-                                            <div className="flex items-center justify-between gap-2">
-                                                <h3>{item.Name}</h3>
-                                                <h3 className='px-2 py-1 text-xs leading-none text-gray-500 bg-gray-200 rounded-md'>{item?.UnitKerja?.RoleName}</h3>
+                                            <div className="flex items-center justify-between gap-3">
+                                                <h3 className="w-1/2 truncate">{item.Name}</h3>
+                                                <h3 className='px-2 py-1 text-xs leading-none text-gray-500 bg-gray-200 rounded-md max-w-[50%] truncate'>{item?.UnitKerja?.RoleName}</h3>
                                             </div>
                                         </div>
                                     ))}

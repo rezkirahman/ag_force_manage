@@ -8,6 +8,7 @@ import { Icon } from '@iconify/react'
 import { useAppContext } from '@/context'
 import { exportJournalActivity, userSuggestionsExport } from '@/api/journal/journal'
 import { useRouter } from 'next/navigation'
+import PrimaryButton from '../PrimaryButton'
 
 const ModalExportJournal = ({ open, setOpen }) => {
     const router = useRouter()
@@ -47,10 +48,9 @@ const ModalExportJournal = ({ open, setOpen }) => {
                 severity: 'success'
             })
             router.push(data?.data)
-            setOpen(false)
         }
         setLoadingExport(false)
-    }, [endDate, router, selectedUser, setOpen, setOpenSnackbar, startDate, unitKerja])
+    }, [endDate, router, selectedUser, setOpenSnackbar, startDate, unitKerja])
 
     useEffect(() => {
         if (open) {
@@ -98,14 +98,12 @@ const ModalExportJournal = ({ open, setOpen }) => {
                     renderInput={(params) => <TextField {...params} label='Karyawan' helperText="Kosongkan untuk mendapatkan seluruh karyawan." />}
                 />
             </div>
-            <Button
-                size='large'
+            <PrimaryButton
+                loading={loadingExport}
                 onClick={handleExportJournal}
-                fullWidth
-                variant="contained"
             >
-                {loadingExport ? <Icon icon='mdi:loading' className='text-[27px] animate-spin' /> : 'Export'}
-            </Button>
+                Export
+            </PrimaryButton>
         </ModalLayout>
     )
 }

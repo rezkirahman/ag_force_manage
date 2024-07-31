@@ -5,184 +5,105 @@ import PhotoView from "@/components/PhotoView"
 import { theme } from "@/config/materialui-config"
 import { useAppContext } from "@/context"
 import { Icon } from "@iconify/react"
-import { SpeedDial, SpeedDialAction, SpeedDialIcon, ThemeProvider, Tooltip } from "@mui/material"
+import { IconButton, SpeedDial, SpeedDialAction, SpeedDialIcon, ThemeProvider, Tooltip } from "@mui/material"
 import { GoogleMap, InfoWindow, LoadScriptNext, Marker, MarkerClusterer } from "@react-google-maps/api"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import dayjs from 'dayjs'
 import FilterUser from "@/components/tracking-map/FiltererUser"
+import { firestore } from "@/config/firebase-config"
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import moment from "moment"
+import ModalOnDutyUnit from "@/components/tracking-map/ModalOnDutyUnit"
+import debounce from 'lodash/debounce';
 
 const Page = () => {
-    const { unitKerja } = useAppContext()
+    const { user, unitKerja } = useAppContext()
     const mapKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
     const mapsLibraries = ['places']
     const [center, setCenter] = useState({ lat: -6.2088, lng: 106.8456 })
-    const [zoom, setZoom] = useState(12)
+    const [zoom, setZoom] = useState(5)
     const [selectedMarker, setSelectedMarker] = useState(null)
     const [isSatelliteMode, setIsSatelliteMode] = useState(false)
     const [isClusteringEnabled, setIsClusteringEnabled] = useState(true)
     const [radius, setRadius] = useState(1000)
-    const [person, setPerson] = useState([
-        {
-            Name: 'Asep',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/944629b983ed4d239d0ec968b01198f0.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Budi',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Caca',
-            Phone: '628123456789',
-            Role: 'SGA',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Dedi',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Euis',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Asep',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/944629b983ed4d239d0ec968b01198f0.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Budi',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Caca',
-            Phone: '628123456789',
-            Role: 'SGA',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Dedi',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Euis',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Asep',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/944629b983ed4d239d0ec968b01198f0.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Budi',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Caca',
-            Phone: '628123456789',
-            Role: 'SGA',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Dedi',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-        {
-            Name: 'Euis',
-            Phone: '628123456789',
-            Role: 'AGP',
-            Image: 'https://pai.agforce.co.id/assets/user/37d0001be4ba430e94ce4b125bd36271.png',
-            TimeStamp: { seconds: 1634414400 },
-            position: { lat: -6.2088, lng: 106.8456 }
-        },
-    ])
+    const [unitCode, setUnitCode] = useState(null)
+    const [person, setPerson] = useState([])
+    const [openModalOndutyUnit, setOpenModalOndutyUnit] = useState(false)
+    const [bounds, setBounds] = useState(null)
+    const [filteredMarkers, setFilteredMarkers] = useState([])
+    const mapRef = useRef(null)
 
-    const actions = [
-        {
-            icon: <Icon icon={isSatelliteMode ? 'material-symbols:satellite-alt' : 'mdi:roadmap'} className="text-2xl" />,
-            name: isSatelliteMode ? 'Satellite' : 'Roadmap',
-            onClick: () => setIsSatelliteMode(!isSatelliteMode)
-        },
-        {
-            icon: <Icon icon='vaadin:cluster' className="text-2xl" />,
-            name: isClusteringEnabled ? 'Turn Off Clustering' : 'Turn On Clustering',
-            onClick: () => setIsClusteringEnabled(!isClusteringEnabled)
-        },
-        {
-            icon: <Icon icon='mdi:download' className="text-2xl" />,
-            name: 'Export',
-            // onClick: handleGetExportOnduty
-        },
-    ];
-
-    const getIcon = (type) => {
-        let icon = '/onduty/sga-icon.png'
-        switch (type) {
-            case 'AGP':
-                icon = '/onduty/agp-icon.png'
-                break;
-            default:
-                break;
+    const handleBoundsChanged = useCallback(() => {
+        if (mapRef.current) {
+            const bounds = mapRef.current.getBounds();
+            const visibleMarkers = person.filter(marker => bounds.contains(marker.position));
+            setFilteredMarkers(visibleMarkers);
         }
-        return icon
-    }
+    }, [person])
+
+    useEffect(() => {
+        if (mapRef.current) {
+            handleBoundsChanged();
+        }
+    }, [handleBoundsChanged]);
+
+    const debouncedHandleBoundsChanged = debounce(handleBoundsChanged, 300)
 
     const handleMarkerClick = (marker) => {
         if (marker?.position) {
             setSelectedMarker(marker);
             setCenter({ lat: marker.position.lat, lng: marker.position.lng })
-            setZoom(20)
+            setZoom(18)
         }
     }
 
+    useEffect(() => {
+        const unitKerjaBase64decode = (code) => {
+            return Buffer.from(code, 'base64').toString('ascii').replace("unit_kerja", "")
+        }
+        if (unitKerja) {
+            setUnitCode(unitKerjaBase64decode(unitKerja.unique))
+        }
+
+    }, [unitKerja])
+
+    useEffect(() => {
+        const streamUser = () => {
+            let q = query(collection(firestore, 'Duty'), where('UnitKerjas', 'array-contains-any', [parseInt(unitCode)]))
+            if (user?.is_command_center) {
+                q = query(collection(firestore, 'Duty'))
+            }
+
+            const unsubTrack = onSnapshot(q, (querySnapshot) => {
+                const datas = [];
+                const onlyOnDuty = [];
+                querySnapshot.forEach((doc) => {
+                    const d = doc.data().TimeStamp;
+                    const getDateNow = new Date();
+                    let waktu = `${getDateNow.getDate()}` + getDateNow.getHours() + ':' + getDateNow.getMinutes();
+                    if (d !== null) {
+                        waktu = moment(d.toDate()).format('D/M/Y HH:mm');
+                    }
+                    datas.push({ ...doc.data(), id: doc.id, waktu });
+                    if (doc.data().IsDuty) {
+                        onlyOnDuty.push({
+                            ...doc.data(),
+                            id: doc.id,
+                            position: { lat: doc.data().Location._lat, lng: doc.data().Location._long },
+                        })
+                    }
+                });
+
+                setPerson(onlyOnDuty);
+            });
+
+            return () => unsubTrack();
+        }
+        if (unitCode) {
+            streamUser()
+        }
+    }, [unitCode, user])
 
     return (
         <ThemeProvider theme={theme}>
@@ -190,24 +111,9 @@ const Page = () => {
                 <Layout></Layout>
             </div>
             <div className="relative w-screen h-screen text-sm overflow-clip">
-                <div className="absolute inset-x-0 z-20 px-6 space-y-4 top-4">
-                    <Header />
+                <div className="absolute inset-x-0 z-30 px-6 space-y-4 top-4">
+                    <Header isMenuButton />
                 </div>
-                <SpeedDial
-                    ariaLabel="SpeedDial basic"
-                    icon={<SpeedDialIcon />}
-                    direction="bottom"
-                    className="absolute z-10 top-24 left-6"
-                >
-                    {actions.map((action) => (
-                        <SpeedDialAction
-                            key={action.name}
-                            icon={action.icon}
-                            tooltipTitle={action.name}
-                            onClick={action.onClick}
-                        />
-                    ))}
-                </SpeedDial>
                 <FilterUser
                     title={'User On Duty'}
                     handleClick={handleMarkerClick}
@@ -216,7 +122,40 @@ const Page = () => {
                     setRadius={setRadius}
                     person={person}
                 />
-                <LoadScriptNext googleMapsApiKey={mapKey} libraries={mapsLibraries}>
+                <ModalOnDutyUnit
+                    open={openModalOndutyUnit}
+                    setOpen={setOpenModalOndutyUnit}
+                    user={person}
+                />
+                <div className="absolute z-10 flex flex-col gap-3 top-24 left-6">
+                    <Tooltip arrow title={isClusteringEnabled ? 'Turn Off Clustering' : 'Turn On Clustering'} placement="right">
+                        <IconButton
+                            className="bg-white shadow-lg hover:bg-gray-200"
+                            onClick={() => setIsClusteringEnabled(prev => !prev)}
+                        >
+                            <Icon icon='vaadin:cluster' />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip arrow title={isSatelliteMode ? 'Roadmap' : 'Satellite'} placement="right">
+                        <IconButton
+                            className="bg-white shadow-lg hover:bg-gray-200"
+                            onClick={() => setIsSatelliteMode(prev => !prev)}
+                        >
+                            <Icon icon={isSatelliteMode ? 'material-symbols:satellite-alt' : 'mdi:roadmap'} />
+                        </IconButton>
+                    </Tooltip>
+                    {user?.is_command_center && (
+                        <Tooltip arrow title={'Unit On Duty'} placement="right">
+                            <IconButton
+                                className="bg-white shadow-lg hover:bg-gray-200"
+                                onClick={() => setOpenModalOndutyUnit(true)}
+                            >
+                                <Icon icon='mdi:account-group' />
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                </div>
+                <LoadScriptNext googleMapsApiKey={mapKey}>
                     <GoogleMap
                         id="google-map"
                         mapContainerStyle={{
@@ -232,11 +171,18 @@ const Page = () => {
                             mapTypeControl: false,
                             mapTypeId: isSatelliteMode ? 'satellite' : 'roadmap',
                         }}
+                        onLoad={map => { mapRef.current = map }}
+                        onBoundsChanged={debouncedHandleBoundsChanged}
+                        onZoomChanged={() => {
+                            if (mapRef.current) {
+                                setZoom(mapRef.current.getZoom())
+                            }
+                        }}
                     >
                         {isClusteringEnabled ? (
                             <MarkerClusterer options={{ imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' }}>
                                 {(clusterer) =>
-                                    person.map((marker, index) => (
+                                    filteredMarkers.map((marker, index) => (
                                         <Marker
                                             key={index}
                                             position={marker.position}
@@ -253,7 +199,7 @@ const Page = () => {
                                 }
                             </MarkerClusterer>
                         ) : (
-                            person.map((marker, index) => (
+                            filteredMarkers.map((marker, index) => (
                                 <Marker
                                     key={index}
                                     position={marker.position}
@@ -294,7 +240,10 @@ const DetailInfoWindow = ({ data }) => {
             <div className="w-12">
                 <PhotoView photo={data.Image} />
             </div>
-            <h1 className="font-semibold">{data.Name}</h1>
+            <div className="space-y-1">
+                <h3 className="font-semibold text-center">{data.Name}</h3>
+                <h3 className="text-center">{data?.UnitKerja?.RoleName}</h3>
+            </div>
             <Tooltip title={'hubungi via Whatsapp'} placement="bottom" arrow>
                 <Link
                     className="relative px-2 py-1 text-green-700 rounded-md group bg-green-700/20 hover:bg-green-700/30"
@@ -317,4 +266,16 @@ const DetailInfoWindow = ({ data }) => {
             </div>
         </div>
     )
+}
+
+const getIcon = (type) => {
+    let icon = '/onduty/sga-icon.png'
+    switch (type) {
+        case 'AGP':
+            icon = '/onduty/agp-icon.png'
+            break;
+        default:
+            break;
+    }
+    return icon
 }

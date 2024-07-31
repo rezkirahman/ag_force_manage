@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { BodyItem, BodyRow, HeadItem, HeadRow, TableHead, TableBody, Table } from '@/components/Table'
 import Container from '@/components/Container'
 import { useDebounce } from 'use-debounce'
-import { IconButton, InputAdornment, Pagination, TextField, Tooltip } from '@mui/material'
+import { Button, IconButton, InputAdornment, Pagination, TextField, Tooltip } from '@mui/material'
 import { Icon } from '@iconify/react'
 import { useAppContext } from '@/context'
 import dayjs from 'dayjs'
@@ -21,6 +21,8 @@ const Page = () => {
   const [filter, setFilter] = useState({
     date: dayjs(),
     role: [],
+    category: [],
+    status: 0,
   })
   const [listJournal, setListJournal] = useState([])
   const [loadingListJournal, setLoadingListJournal] = useState(false)
@@ -36,11 +38,16 @@ const Page = () => {
     setListJournal([])
     setLoadingListJournal(true)
     const body = {
-      limit: 10,
       search: searchDebounced,
       page: page,
       role_id: filter.role,
-      date: filter.date.format("YYYY-MM-DD")
+      status: filter.status,
+      date: filter.date.format("YYYY-MM-DD"),
+      approval: filter.category,
+      paginate: {
+        limit: 10,
+        page: page,
+      }
     }
     const { data } = await listJournalActivity({
       unitKerja: unitKerja.id,
@@ -94,14 +101,15 @@ const Page = () => {
                   startAdornment: <InputAdornment position="start"><Icon icon={'material-symbols:search'} /></InputAdornment>,
                 }}
               />
-              <Tooltip title='Filter' arrow>
-                <IconButton
-                  size='large'
-                  onClick={() => setOpenModalFilter(true)}
-                >
-                  <Icon icon="mage:filter-fill" />
-                </IconButton>
-              </Tooltip>
+              <Button
+                size='large'
+                variant='contained'
+                color='primary'
+                onClick={() => setOpenModalFilter(true)}
+                startIcon={<Icon icon="mage:filter-fill" />}
+              >
+                Filter
+              </Button>
               <Tooltip title='Unduh' arrow>
                 <IconButton
                   color='primary'
@@ -114,7 +122,7 @@ const Page = () => {
               </Tooltip>
             </div>
           </div>
-          <Table list={listJournal} loading={loadingListJournal}>
+          <Table list={listJournal} loading={loadingListJournal} className={'min-h-[400px]'}>
             <TableHead>
               <HeadRow className={'uppercase align-top'}>
                 <HeadItem start>ID</HeadItem>
@@ -130,44 +138,50 @@ const Page = () => {
                 <BodyRow key={i} className={'align-top'}>
                   <BodyItem start>{item.ref_id}</BodyItem>
                   <BodyItem>{item.nik}</BodyItem>
-                  <BodyItem>
-                    <Tooltip arrow title={`${item.full_name} - ${item.role_name}`}>
-                      <div className="">
+                  <BodyItem className={'w-fit'}>
+                    <Tooltip arrow title={`${item.full_name} - ${item.role_name}`} >
+                      <div className='w-fit'>
                         <h3 className="font-semibold line-clamp-1">{item.full_name}</h3>
                         <h3 className="text-xs line-clamp-1">{item.role_name}</h3>
                       </div>
                     </Tooltip>
                   </BodyItem>
                   <BodyItem>
-                    <h3 className='line-clamp-2'>{item.content}</h3>
+                    {item.content ?
+                      <h3 className='line-clamp-2'>{item.content}</h3> : '-'
+                    }
                   </BodyItem>
                   {/* <BodyItem>{item.total_activity}</BodyItem> */}
                   <BodyItem end>
-                    <Tooltip title='Detail' arrow>
-                      <IconButton
-                        size='small'
-                        onClick={() => {
-                          setSelectedJournal(item)
-                          setOpenModalDetail(true)
-                        }}
-                      >
-                        <Icon icon='mdi:eye' className='' />
-                      </IconButton>
-                    </Tooltip>
+                    {item.content && (
+                      <Tooltip title='Detail' arrow>
+                        <IconButton
+                          size='small'
+                          onClick={() => {
+                            setSelectedJournal(item)
+                            setOpenModalDetail(true)
+                          }}
+                        >
+                          <Icon icon='mdi:eye' className='' />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </BodyItem>
                 </BodyRow>
               ))}
             </TableBody>
           </Table>
         </div>
-        <Pagination
-          count={totalPage}
-          page={page}
-          onChange={(e, value) => setPage(value)}
-          color='primary'
-          size='small'
-          className='mx-auto mt-4 w-fit'
-        />
+        {listJournal.length > 0 && (
+          <Pagination
+            count={totalPage}
+            page={page}
+            onChange={(e, value) => setPage(value)}
+            color='primary'
+            size='small'
+            className='mx-auto mt-4 w-fit'
+          />
+        )}
       </Container>
     </Layout>
   )

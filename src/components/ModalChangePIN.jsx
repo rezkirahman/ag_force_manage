@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react'
 import ErrorMessage from './ErrorMessage'
 import { useAppContext } from '@/context'
 import { changePIN } from '@/api/getMe'
+import PrimaryButton from './PrimaryButton'
 
 const ModalChangePIN = ({ open, setOpen }) => {
     const { unitKerja, setOpenSnackbar } = useAppContext()
@@ -159,16 +160,13 @@ const ModalChangePIN = ({ open, setOpen }) => {
                         helperText={(konfirmasiPinBaru.length > 1 && konfirmasiPinBaru.length < 6) ? 'PIN harus 6 digit atau PIN' : (konfirmasiPinBaru !== pinBaru && konfirmasiPinBaru.length > 1) && 'PIN tidak cocok'}
                     />
                 </div>
-                <Button
-                    variant='contained'
-                    color='primary'
-                    fullWidth
-                    size='large'
+                <PrimaryButton
+                    loading={loadingChangePIN}
                     disabled={!readyToSubmit || loadingChangePIN}
                     onClick={handleChangePIN}
                 >
-                    {loadingChangePIN ? <Icon icon={'mdi:loading'} className='text-[27px] animate-spin' /> : 'Ubah'}
-                </Button>
+                    Ubah
+                </PrimaryButton>
             </div>
         </ModalLayout>
     )

@@ -115,7 +115,7 @@ const Login = () => {
             }}>
               <div className='flex flex-col justify-between h-full gap-6 overflow-clip'>
                 <div className='flex items-center justify-between gap-4'>
-                  <h3 className='text-lg font-semibold md:text-2xl lg:text-3xl whitespace-nowrap'>Selamat Datang</h3>
+                  <h3 className='text-xl font-semibold md:text-lg lg:text-xl whitespace-nowrap'>Selamat Datang</h3>
                   <div className={`${tab == 'phone' ? 'scale-0' : 'scale-100'} duration-300`}>
                     <IconButton
                       onClick={() => setTab('phone')}
@@ -161,7 +161,7 @@ const Login = () => {
                     disabled={loading}
                     type='submit'
                   >
-                    {loading ? <Icon icon={'mingcute:loading-fill'} className='text-[27px] animate-spin' /> : 'Masuk'}
+                    {loading ? <Icon icon={'mingcute:loading-fill'} className='text-[26px] animate-spin' /> : 'Masuk'}
                   </Button>
                   <h3>Mengalami kendala? <Link href={'https://wa.me/+6282129819050'} target='_blank' className='font-semibold duration-150 cursor-pointer text-primary/70 hover:text-primary'>Hubungi Kami</Link></h3>
                 </div>

@@ -1,6 +1,7 @@
 import { createLocationAttendance, oneLocationAttendance, updateLocationAttendance } from '@/api/settings/attendance-location'
 import ModalLayout from '@/components/ModalLayout'
 import PlacesAutocomplete from '@/components/placesAutocomplete'
+import PrimaryButton from '@/components/PrimaryButton'
 import { useAppContext } from '@/context'
 import { GenerateAddress } from '@/helper/generateAddress'
 import { Icon } from '@iconify/react'
@@ -134,10 +135,10 @@ const ModalAddEditLocationAttendance = ({ open, setOpen, edit, refresh, id }) =>
             title={edit ? 'Edit Lokasi' : 'Tambah Lokasi'}
         >
             <div className='space-y-6'>
-                <div className='space-y-3'>
-                    <Alert severity='info'>Lokasi yang ditambah dapat digunakan sebagai lokasi geotagging karyawan.</Alert>
-                </div>
                 <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1 py-1">
+                    {!edit && (
+                        <Alert severity='info'>Lokasi yang ditambahkan akan digunakan sebagai lokasi kehadiran karyawan.</Alert>
+                    )}
                     <TextField
                         value={namaTempat}
                         label='Nama Tempat'
@@ -165,7 +166,7 @@ const ModalAddEditLocationAttendance = ({ open, setOpen, edit, refresh, id }) =>
                     <LoadScriptNext googleMapsApiKey={mapKey} libraries={mapsLibraries}>
                         <div className="relative space-y-2">
                             <GoogleMap
-                                mapContainerStyle={{ width: '100%', height: '40vh' }}
+                                mapContainerStyle={{ width: '100%', height: '50vh' }}
                                 center={center}
                                 onClick={(e) => {
                                     setCenter({ lat: e.latLng.lat(), lng: e.latLng.lng() });
@@ -227,15 +228,15 @@ const ModalAddEditLocationAttendance = ({ open, setOpen, edit, refresh, id }) =>
                         </div>
                     </LoadScriptNext>
                 </div>
-                <Button
-                    variant='contained'
-                    fullWidth
-                    size='large'
-                    disabled={!isAllowSubmit || loading}
-                    onClick={edit ? handleEditLocation : handleAddLocation}
-                >
-                    {loading ? <Icon icon='mingcute:loading-fill' className='text-[27px] animate-spin' /> : edit ? 'Simpan Perubahan' : 'Tambah Lokasi'}
-                </Button>
+                <div className='flex justify-end'>
+                    <PrimaryButton
+                        loading={loading}
+                        disabled={!isAllowSubmit || loading}
+                        onClick={edit ? handleEditLocation : handleAddLocation}
+                    >
+                        {edit ? 'Simpan' : 'Tambahkan'}
+                    </PrimaryButton>
+                </div>
             </div>
         </ModalLayout>
     )

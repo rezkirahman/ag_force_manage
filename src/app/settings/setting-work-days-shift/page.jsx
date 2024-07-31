@@ -1,33 +1,13 @@
 'use client'
 import Layout from '@/components/Layout'
-import Shift from '@/components/settings/Shift'
-import WorkDays from '@/components/settings/WorkDays'
 import { Tab, Tabs } from '@mui/material'
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { duration } from 'moment'
+import ShiftTab from '@/components/settings/work-days-shift/ShiftTab'
+import WorkDaysTab from '@/components/settings/work-days-shift/WorkDaysTab'
 
 const Page = () => {
     const [tab, setTab] = useState('workdays')
     const direction = tab === 'workdays' ? 1 : -1
-
-    const slideVariants = {
-        initial: (direction) => ({
-            x: direction > 0 ? -1000 : 1000,
-            opacity: 0,
-            transition: { type: 'spring', stiffness: 120, damping: 20 }
-        }),
-        animate: {
-            x: 0,
-            opacity: 1,
-            transition: { type: 'spring', stiffness: 120, damping: 20 }
-        },
-        exit: (direction) => ({
-            x: direction < 0 ? -1000 : 1000,
-            opacity: 0,
-            transition: { type: 'spring', stiffness: 120, damping: 20 }
-        }),
-    }
 
     return (
         <Layout>
@@ -39,28 +19,10 @@ const Page = () => {
             </div>
             <div className=''>
                 {tab === 'workdays' && (
-                    <motion.div
-                        key="workdays"
-                        custom={direction}
-                        variants={slideVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                    >
-                        <WorkDays />
-                    </motion.div>
+                    <WorkDaysTab />
                 )}
                 {tab === 'shift' && (
-                    <motion.div
-                        key="shift"
-                        custom={direction}
-                        variants={slideVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                    >
-                        <Shift />
-                    </motion.div>
+                    <ShiftTab />
                 )}
             </div>
         </Layout>

@@ -10,7 +10,7 @@ import { useAppContext } from '@/context'
 import nookies from 'nookies'
 import ModalChangePIN from './ModalChangePIN'
 
-const Header = () => {
+const Header = ({ isMenuButton = false }) => {
     const { user } = useAppContext()
     const [anchorElProfile, setAnchorElProfile] = useState(null)
     const openProfile = Boolean(anchorElProfile);
@@ -26,7 +26,7 @@ const Header = () => {
         <div className='sticky top-0 z-20 w-full px-2 py-2 bg-white md:px-6 rounded-2xl shadow-container'>
             <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-1'>
-                    <div className={pathname === '/tracking' ? 'not-sr-only' : 'not-sr-only lg:sr-only'}>
+                    <div className={isMenuButton ? 'not-sr-only' : 'not-sr-only lg:sr-only'}>
                         <IconButton
                             onClick={() => setOpenDrawer(!openDrawer)}
                         >

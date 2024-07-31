@@ -11,7 +11,7 @@ export const Table = ({ children, className, loading = false, list }) => {
             </table>
             {loading ?
                 (<div className='flex justify-center pt-4'>
-                    <Icon icon={'mingcute:loading-fill'} className='text-[27px] animate-spin' />
+                    <Icon icon={'mingcute:loading-fill'} className='text-[26px] animate-spin' />
                 </div>) :
                 ((list?.length == 0 || !list) &&
                     <h3 className='w-full pt-4 text-center'>Tidak ada data</h3>

@@ -37,7 +37,7 @@ const ModalDeleteConfirmation = ({ open, setOpen, handleDelete, title, descripti
                         component="span"
                         disabled={loading}
                     >
-                        {loading ? <Icon icon='mdi:loading' className='text-[27px] animate-spin' /> : 'Hapus'}
+                        {loading ? <Icon icon='mdi:loading' className='text-[26px] animate-spin' /> : 'Hapus'}
                     </Button>
                 </div>
             </div>

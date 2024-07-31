@@ -6,11 +6,11 @@ import { BodyItem, BodyRow, HeadItem, HeadRow, TableHead, TableBody, Table } fro
 import { useAppContext } from "@/context"
 import { Icon } from "@iconify/react"
 import { Alert, Button, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useDebounce } from "use-debounce"
 import ModalAddEditLocationAttendance from "./ModalAddEditLocationAttendance"
 
-const LocationListAttendance = () => {
+const LocationTab = () => {
     const { unitKerja, setOpenSnackbar } = useAppContext()
     const [search, setSearch] = useState('')
     const [openAddLocation, setOpenAddLocation] = useState(false)
@@ -82,8 +82,6 @@ const LocationListAttendance = () => {
                 handleDelete={() => handleDeleteLocation()}
             />
             <div className='space-y-6'>
-                <h3 className="font-semibold">Daftar Lokasi Geotagging</h3>
-                <Alert severity="info">Pengaturan ini digunakan untuk lokasi check-in attendance dengan metode geotagging.</Alert>
                 <div className='flex items-center justify-between gap-3'>
                     <TextField
                         value={search}
@@ -103,33 +101,41 @@ const LocationListAttendance = () => {
                         size="large"
                         variant="contained"
                         onClick={() => setOpenAddLocation(true)}
+                        startIcon={<Icon icon={'mdi:plus'}/>}
                     >
-                        Tambah Lokasi
+                        Tambah
                     </Button>
                 </div>
                 <Table list={listLocation} loading={loading}>
                     <TableHead>
-                        <HeadRow className={'align-top'}>
-                            <HeadItem start>Nama Tempat</HeadItem>
-                            <HeadItem>Radius (meter)</HeadItem>
+                        <HeadRow>
+                            <HeadItem start>Nama</HeadItem>
+                            <HeadItem>Radius</HeadItem>
                             <HeadItem>Alamat</HeadItem>
-                            <HeadItem end>Action</HeadItem>
+                            <HeadItem end>Aksi</HeadItem>
                         </HeadRow>
                     </TableHead>
                     <TableBody>
-                        {[...listLocation]?.reverse().map((data, i) => (
-                            <BodyRow key={i} className={'align-top'}>
-                                <BodyItem start className={'font-medium'}>{data.place_name}</BodyItem>
-                                <BodyItem>{data.radius}</BodyItem>
+                        {[...listLocation]?.reverse().map((item, i) => (
+                            <BodyRow key={i} className={''}>
+                                <BodyItem start className={'font-medium'}>
+                                    <Tooltip title={item.place_name} arrow>
+                                        <h3 className="line-clamp-1">{item.place_name}</h3>
+                                    </Tooltip>
+                                </BodyItem>
+                                <BodyItem>{item.radius} m</BodyItem>
                                 <BodyItem>
-                                    <h3 className="line-clamp-2">{data.address}</h3>
+                                    <Tooltip title={item.address} arrow>
+                                        <h3 className="line-clamp-1">{item.address}</h3>
+                                    </Tooltip>
                                 </BodyItem>
                                 <BodyItem end>
                                     <div className='flex items-center justify-center gap-2'>
                                         <Tooltip title='Ubah' arrow>
                                             <IconButton
+                                                size="small"
                                                 onClick={() => {
-                                                    setSelectedLocation(data)
+                                                    setSelectedLocation(item)
                                                     setOpenEditLocation(true)
                                                 }}
                                             >
@@ -138,9 +144,10 @@ const LocationListAttendance = () => {
                                         </Tooltip>
                                         <Tooltip title='Hapus' arrow>
                                             <IconButton
+                                                size="small"
                                                 color="error"
                                                 onClick={() => {
-                                                    setSelectedLocation(data)
+                                                    setSelectedLocation(item)
                                                     setOpenModalDelete(true)
                                                 }}
                                             >
@@ -158,4 +165,4 @@ const LocationListAttendance = () => {
     )
 }
 
-export default LocationListAttendance
+export default LocationTab

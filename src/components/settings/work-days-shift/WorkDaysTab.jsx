@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback, use } from "react"
-import { Switch, TextField, Button, Icon } from "@mui/material"
+import { Switch, TextField, Button, Icon, Alert } from "@mui/material"
 import { useAppContext } from "@/context"
 import { listWorkDays, updateWorkDays } from "@/api/settings/work-days-shift"
-import Container from "../Container"
+import Container from "../../Container"
 import { AnimatePresence, motion } from "framer-motion"
-import Transition from "../transition"
+import Transition from "../../transition"
+import PrimaryButton from "../../PrimaryButton"
 
-const WorkDays = () => {
+const WorkDaysTab = () => {
     const { unitKerja, setOpenSnackbar } = useAppContext()
     const [senin, setSenin] = useState()
     const [selasa, setSelasa] = useState()
@@ -71,12 +72,9 @@ const WorkDays = () => {
     return (
         <Container>
             <div className='space-y-6'>
-                <div className="flex items-center justify-between gap-2">
-                    <div className="space-y-2">
-                        <h3 className="font-semibold">Work Days Operasional</h3>
-                        <h3 className="">Jadwal hari dan jam kerja yang berlaku di bisnis unit ( diluar jam shift )</h3>
-                    </div>
-                </div>
+                    <Alert severity="info">
+                        <h3 className="">Jadwal hari dan jam kerja yang berlaku ( diluar jam shift ).</h3>
+                    </Alert>
                 <div className="space-y-6">
                     <div className='space-y-3 overflow-x-auto overflow-clip'>
                         <table className="w-full ">
@@ -102,14 +100,14 @@ const WorkDays = () => {
                     </div>
                 </div>
                 <div className='flex justify-end'>
-                    <Button
-                        size='large'
-                        variant="contained"
+                    <PrimaryButton
+                        loading={loading}
                         onClick={handleUpdateWorkDays}
                         disabled={loading || !isValueChanged}
+                        className={`md:w-1/5`}
                     >
-                        {loading ? <Icon icon={'mingcute:loading-fill'} className='text-[27px] animate-spin' /> : 'Simpan'}
-                    </Button>
+                        Simpan
+                    </PrimaryButton>
                 </div>
             </div>
         </Container>
@@ -158,21 +156,21 @@ const TimeRow = ({
     )
 }
 
-export default WorkDays
+export default WorkDaysTab
 
 const deepEqual = (obj1, obj2) => {
     if (obj1 === obj2) return true
     if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 == null || obj2 == null) return false;
-    
+
     const keys1 = Object.keys(obj1)
     const keys2 = Object.keys(obj2)
-    
+
     if (keys1.length !== keys2.length) return false
-    
+
     for (let key of keys1) {
         if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) return false;
     }
-    
+
     return true;
 }
 

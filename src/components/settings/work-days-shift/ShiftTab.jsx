@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
-import Container from '../Container'
+import Container from '../../Container'
 import { Icon } from '@iconify/react'
 import { Alert, Button, IconButton, InputAdornment, TextField, Tooltip } from '@mui/material'
 import { useAppContext } from '@/context'
 import { deleteUserShift, listUserShifts } from '@/api/settings/work-days-shift'
-import { BodyItem, BodyRow, HeadItem, HeadRow, Table, TableHead, TableBody } from '../Table'
-import ModalDeleteConfirmation from '../ModalDeleteConfirmation'
-import ModalAddUserShift from './shift/ModalAddUserShift'
+import { BodyItem, BodyRow, HeadItem, HeadRow, Table, TableHead, TableBody } from '../../Table'
+import ModalDeleteConfirmation from '../../ModalDeleteConfirmation'
+import ModalAddUserShift from './ModalAddUserShift'
 
-const Shift = () => {
+const ShiftTab = () => {
     const { unitKerja, setOpenSnackbar } = useAppContext()
     const [loadingListUser, setLoadingListUser] = useState(false)
     const [loadingDeleteUser, setLoadingDeleteUser] = useState(false)
@@ -74,9 +74,8 @@ const Shift = () => {
                 handleDelete={() => handleDeleteUser()}
             />
             <div className="space-y-6">
-                <h3 className="font-semibold">Daftar Karyawan Shift</h3>
                 <Alert severity='info'>
-                    Karyawan dalam jam shift diberikan akses 24/7 untuk melakukan check-in & mengisi jurnal.
+                    <h3>Karyawan dalam jam shift diberikan akses <span className='font-semibold'>24/7</span> untuk melakukan check-in & mengisi jurnal.</h3>
                 </Alert>
                 <div className="flex items-center justify-between gap-3">
                     <TextField
@@ -105,7 +104,7 @@ const Shift = () => {
                             <HeadItem start>ID</HeadItem>
                             <HeadItem>NIK</HeadItem>
                             <HeadItem>Nama</HeadItem>
-                            <HeadItem end>Action</HeadItem>
+                            <HeadItem end>Aksi</HeadItem>
                         </HeadRow>
                     </TableHead>
                     <TableBody>
@@ -114,16 +113,17 @@ const Shift = () => {
                                 <BodyItem start>{item.ref_id}</BodyItem>
                                 <BodyItem>{item.nik}</BodyItem>
                                 <BodyItem>
-                                    <div className="">
-                                        <h3 className="font-semibold">{item.full_name}</h3>
-                                        <div className="px-2 py-1 text-[10px] text-gray-500 bg-gray-100 rounded-full w-fit">
-                                            <h3 className="leading-none">{item.role_name}</h3>
-                                        </div>
+                                    <div className='w-fit'>
+                                        <Tooltip arrow title={`${item.full_name} - ${item.role_name}`}>
+                                            <h3 className="font-semibold line-clamp-1">{item.full_name}</h3>
+                                            <h3 className="text-gray-500 line-clamp-1">{item.role_name}</h3>
+                                        </Tooltip>
                                     </div>
                                 </BodyItem>
                                 <BodyItem end>
                                     <Tooltip title='Hapus' arrow>
                                         <IconButton
+                                            size='small'
                                             color='error'
                                             onClick={() => {
                                                 setSelectedUser(item)
@@ -143,4 +143,4 @@ const Shift = () => {
     )
 }
 
-export default Shift
+export default ShiftTab

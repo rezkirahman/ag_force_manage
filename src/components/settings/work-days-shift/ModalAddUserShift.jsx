@@ -63,7 +63,7 @@ const ModalAddUserShift = ({ open, setOpen, refresh }) => {
             setOpen={setOpen}
             title='Tambah Karyawan Shift'
         >
-            <div className="space-y-6">
+            <div className="h-[50vh] overflow-y-auto">
                 <Autocomplete
                     multiple
                     disableCloseOnSelect
@@ -91,7 +91,6 @@ const ModalAddUserShift = ({ open, setOpen, refresh }) => {
                         const selectedGroupOptions = groupOptions.filter((option) => selectedUser.includes(option))
                         const isAllSelected = groupOptions.length === selectedGroupOptions.length
                         const isSomeSelected = selectedGroupOptions.length > 0 && !isAllSelected
-
                         return (
                             <li key={params.key}>
                                 <ul className='flex items-center'>
@@ -118,16 +117,16 @@ const ModalAddUserShift = ({ open, setOpen, refresh }) => {
                     isOptionEqualToValue={(option, value) => option.user_id === value.user_id}
                     onChange={(e, newValue) => setSelectedUser(newValue)}
                 />
-                <div className="flex justify-end">
-                    <Button
-                        variant="contained"
-                        size="large"
-                        disabled={loadingAddUser || selectedUser.length === 0}
-                        onClick={handleAddUserShift}
-                    >
-                        {loadingAddUser ? <Icon icon='mdi:loading' className='text-2xl animate-spin' /> : 'Tambahkan'}
-                    </Button>
-                </div>
+            </div>
+            <div className="flex justify-end">
+                <Button
+                    variant="contained"
+                    size="large"
+                    disabled={loadingAddUser || selectedUser.length === 0}
+                    onClick={handleAddUserShift}
+                >
+                    {loadingAddUser ? <Icon icon='mdi:loading' className='text-2xl animate-spin' /> : 'Tambahkan'}
+                </Button>
             </div>
         </ModalLayout>
     )

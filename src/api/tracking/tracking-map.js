@@ -34,3 +34,18 @@ export const listLocationPenugasan = async (unitKerja, body) => {
     })
 
 }
+
+export const listUnitBussiness = async ({unitKerja}) => {
+    const signature = MakeSignatureHeader(`/api/v1/track/list-unit`, 'GET', '{}')
+    return await api.get(`/v1/track/list-unit`, {
+        headers: {
+            ...signature,
+            'X-Unit-Kerja': unitKerja
+        }
+    }).then((response) => {
+        return response
+    }).catch((error) => {
+        console.error(error)
+        return error
+    })
+}

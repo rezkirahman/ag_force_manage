@@ -1,4 +1,3 @@
-"use client"
 import { Line } from 'react-chartjs-2'
 import {
     Chart as ChartJS,
@@ -25,7 +24,7 @@ ChartJS.register(
 )
 import { adjustAlphaColor } from '@/helper/adjustAlphaColor'
 
-const DashboardChart = ({ label = [], data = [], color }) => {
+const DashboardChart = ({ label = [], data = [], color='rgba(29, 28, 227, 1)' }) => {
     return (
         < div className='h-[300px] w-full' >
             <Line // Change Bar to Line

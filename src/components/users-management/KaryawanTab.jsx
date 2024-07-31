@@ -164,7 +164,7 @@ const KaryawanTab = () => {
                     description={<h3>Apakah anda yakin ingin menghapus <span className="font-semibold">{selectedKaryawan?.name}</span> dari daftar karyawan?</h3>}
                     loading={loadingDelete}
                     handleDelete={handleDeleteUser}
-                    
+
                 />
                 <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className='flex items-center gap-2 '>
@@ -288,13 +288,18 @@ const UserCard = ({ user, ref = null, setSelected, setOpenModalDelete, setOpenMo
                     <h3 className="text-xs text-center truncate">{user.role_name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                    <div className="p-2 space-y-1 text-xs rounded-xl bg-primary/5">
-                        <h3>ID</h3>
-                        <h3 className="font-medium truncate">{user.ref_id || '-'}</h3>
+                    <div className="p-2 text-xs rounded-xl bg-primary/5">
+                        <Tooltip arrow title={`ID: ${user.ref_id || '-'}`} placement="top" className="space-y-1">
+                            <h3>ID</h3>
+                            <h3 className="font-medium truncate">{user.ref_id || '-'}</h3>
+                        </Tooltip>
                     </div>
-                    <div className="p-2 space-y-1 text-xs rounded-xl bg-primary/5">
-                        <h3>NIK</h3>
-                        <h3 className="font-medium truncate">{user.nik || '-'}</h3>
+
+                    <div className="p-2 text-xs rounded-xl bg-primary/5">
+                        <Tooltip arrow title={`NIK: ${user.nik || '-'}`} placement="top" className="space-y-1">
+                            <h3>NIK</h3>
+                            <h3 className="font-medium truncate">{user.nik || '-'}</h3>
+                        </Tooltip>
                     </div>
                 </div>
                 <div className="flex items-center gap-2 mx-auto w-fit">
@@ -330,29 +335,6 @@ const UserCard = ({ user, ref = null, setSelected, setOpenModalDelete, setOpenMo
                             <Icon icon='mdi:delete' />
                         </IconButton>
                     </Tooltip>
-                </div>
-            </div>
-        </Container>
-    )
-}
-
-const SkeletonCard = () => {
-    return (
-        <Container className={'animate-pulse duration-50'}>
-            <div className="flex flex-col justify-between h-full gap-3">
-                <div className="w-12 h-12 mx-auto bg-gray-300 rounded-full"></div>
-                <div className="space-y-1">
-                    <div className="w-full h-4 bg-gray-300 rounded-lg"></div>
-                    <div className="w-full h-4 bg-gray-300 rounded-lg"></div>
-                </div>
-                <div className="grid h-12 grid-cols-2 gap-3">
-                    <div className="w-full h-full bg-gray-300 rounded-lg"></div>
-                    <div className="w-full h-full bg-gray-300 rounded-lg"></div>
-                </div>
-                <div className="flex items-center gap-2 mx-auto w-fit">
-                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
                 </div>
             </div>
         </Container>

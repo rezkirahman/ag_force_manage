@@ -169,6 +169,7 @@ const ModalAddEditGroupAttendance = ({ open, setOpen, edit, refresh, id }) => {
                 )}
                 {suggestUser.length > 0 && (
                     <Autocomplete
+                        disablePortal
                         multiple
                         disableCloseOnSelect
                         options={[...suggestUser].sort((a, b) => a.role_name.localeCompare(b.role_name))}
@@ -181,20 +182,13 @@ const ModalAddEditGroupAttendance = ({ open, setOpen, edit, refresh, id }) => {
                                     checkedIcon={checkedIcon}
                                     checked={selected || groupChecked[option.role_name] || false}
                                 />
-                                <div className='flex items-center gap-1'>
-                                    <h3>{option.user_name} {option?.nik ? ` - ${option.nik}` : ''}</h3>
-                                    {option?.role_name &&
-                                        <div className='px-2 py-1 text-xs rounded-full bg-slate-200'>
-                                            <h3>{option.role_name}</h3>
-                                        </div>
-                                    }
-                                </div>
+                                <h3>{option.user_name} {option?.nik ? ` - ${option.nik}` : ''}</h3>
                             </li>
                         )}
                         renderGroup={(params) => {
-                            const groupOptions = suggestUser.filter((option) => option.role_name === params.group);
-                            const allSelected = groupOptions.every((option) => selectedUser.includes(option));
-                            const someSelected = groupOptions.some((option) => selectedUser.includes(option));
+                            const groupOptions = suggestUser.filter((option) => option.role_name === params.group)
+                            const allSelected = groupOptions.every((option) => selectedUser.includes(option))
+                            const someSelected = groupOptions.some((option) => selectedUser.includes(option))
                             const indeterminate = someSelected && !allSelected;
                             return (
                                 <li key={params.key}>
@@ -203,19 +197,19 @@ const ModalAddEditGroupAttendance = ({ open, setOpen, edit, refresh, id }) => {
                                             checked={allSelected}
                                             indeterminate={indeterminate}
                                             onChange={(event) => {
-                                                const newCheckedState = event.target.checked;
-                                                setGroupChecked((prev) => ({ ...prev, [params.key]: newCheckedState }));
+                                                const newCheckedState = event.target.checked
+                                                setGroupChecked((prev) => ({ ...prev, [params.key]: newCheckedState }))
                                                 const newSelectedUser = newCheckedState
                                                     ? [...selectedUser, ...groupOptions.filter((option) => !selectedUser.includes(option))]
-                                                    : selectedUser.filter((option) => option.role_name !== params.group);
-                                                setSelectedUser(newSelectedUser);
+                                                    : selectedUser.filter((option) => option.role_name !== params.group)
+                                                setSelectedUser(newSelectedUser)
                                             }}
                                         />
                                         <h3>{params.group}</h3>
                                     </ul>
                                     <ul>{params.children}</ul>
                                 </li>
-                            );
+                            )
                         }}
                         className='w-full'
                         value={selectedUser}

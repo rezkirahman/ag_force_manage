@@ -1,6 +1,8 @@
 import ModalLayout from "@/components/ModalLayout"
 import { Icon } from "@iconify/react"
 import { Alert, Button } from "@mui/material"
+import Lottie from "lottie-react"
+import PINResetAnimation from "../../../public/PINResetAnimation.json"
 
 const ModalResetPINConfirmation = ({ open, setOpen, handle, description, loading }) => {
     return (
@@ -15,7 +17,7 @@ const ModalResetPINConfirmation = ({ open, setOpen, handle, description, loading
                 <Alert severity="warning">
                     PIN yang telah direset akan kembali ke PIN default <span className="font-semibold">000000</span>.
                 </Alert>
-                <Icon icon='solar:key-bold-duotone' className='mx-auto text-6xl text-primary' />
+                <Lottie animationData={PINResetAnimation} style={{ height: 120, width: 120 }}  className="mx-auto"/>
                 <div className="text-center">{description}</div>
                 <div className="grid grid-cols-2 gap-3">
                     <Button

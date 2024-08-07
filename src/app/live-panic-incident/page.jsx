@@ -5,7 +5,7 @@ import { theme } from '@/config/materialui-config'
 import { Icon } from "@iconify/react"
 import { Button, IconButton, ThemeProvider, Tooltip } from '@mui/material'
 import { GoogleMap, LoadScriptNext, InfoWindow, Marker } from '@react-google-maps/api'
-import { debounce } from 'lodash'
+import { debounce, set } from 'lodash'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { firestore } from "@/config/firebase-config"
@@ -18,10 +18,12 @@ import ImageView from "@/components/ImageView"
 import ModalSolve from "@/components/live-panic-incident/ModalSolve"
 import { useAppContext } from "@/context"
 import SnackbarNotification from "@/components/SnackbarNotification"
+import ModalLayout from "@/components/ModalLayout"
 
 const Page = () => {
     const { unitKerja, setOpenSnackbar } = useAppContext()
     const mapKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    const [openModalFirstLoad, setOpenModalFirstLoad] = useState(true)
     const [data, setData] = useState([])
     const [user, setUser] = useState([])
     const [center, setCenter] = useState({ lat: -6.2088, lng: 106.8456 })
@@ -41,16 +43,21 @@ const Page = () => {
         }
     }
 
+    const playMusic = () => {
+        const audio = new Audio('/notification.mp3')
+        audio.play()
+    }
+
     const handleBoundsChanged = useCallback(() => {
         if (mapRef.current) {
             const bounds = mapRef.current.getBounds();
-            const visibleMarkers = user.filter(marker => bounds?.contains({
+            const visibleMarkers = data.filter(marker => bounds?.contains({
                 lat: marker.Latitude,
                 lng: marker.Longitude
             }))
             setFilteredMarkers(visibleMarkers)
         }
-    }, [user])
+    }, [data])
 
     const debouncedHandleBoundsChanged = debounce(handleBoundsChanged, 300)
 
@@ -89,16 +96,22 @@ const Page = () => {
                             ...doc.data(),
                             waktu: moment(doc.data().Time).format('HH:mm:ss'),
                             alamat: 'lihat',
-                        });
+                        })
                     }
-                });
+                })
                 data.push(...datas)
                 const filteredArr = data.reduce((acc, current) => {
-                    return acc.concat([current]);
-                }, []);
-                setData(filteredArr)
-            });
+                    return acc.concat([current])
+                }, [])
+                const filteredData = filteredArr.filter((e) => !e.Expired).sort((a, b) => {
+                    let dateA = new Date(a?.TanggalDibuat?.seconds * 1000)
+                    let dateB = new Date(b?.TanggalDibuat?.seconds * 1000)
+                    return dateB - dateA
+                })
+                setData(filteredData)
+            })
         }
+        streamUser()
         const streamUserPanic = () => {
             streamUser()
             const q = query(collection(firestore, "Panic"));
@@ -163,7 +176,6 @@ const Page = () => {
                 setUser(filteredArr.filter((item) => !item.Expired))
             });
         }
-        streamUserPanic()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -180,7 +192,23 @@ const Page = () => {
         }
     }, [])
 
-    useEffect(() => { console.log(user); }, [user])
+    useEffect(() => {
+        console.log(data.length, user.length)
+        if (data.length == 0) {
+            setUser([])
+        }
+        if (data.length > user.length) {
+            setUser(data)
+            if (!openModalFirstLoad) {
+                playMusic()
+            }
+            console.log('new incident');
+        } else {
+            setUser(data)
+        }
+    }, [data, user, openModalFirstLoad])
+
+    useEffect(() => { console.log(user) }, [user])
 
     return (
         <ThemeProvider theme={theme}>
@@ -188,13 +216,32 @@ const Page = () => {
             <div className='sr-only'>
                 <Layout></Layout>
             </div>
+            <ModalLayout
+                open={openModalFirstLoad}
+                className={'max-w-[400px]'}
+                title={'Informasi'}
+                disableCloseButton
+            >
+                <div className="space-y-6">
+                    <h3 className="text-center">Halaman ini akan memberi anda notifikasi berupa peringatan suara dan tampilan jika terdapat kejadian darurat. </h3>
+                    <div className="flex justify-center">
+                        <Button
+                            variant="contained"
+                            size="large"
+                            onClick={() => setOpenModalFirstLoad(false)}
+                        >
+                            Mengerti
+                        </Button>
+                    </div>
+                </div>
+            </ModalLayout>
             <div className="relative w-screen h-screen text-sm overflow-clip">
                 <SideBarPanicIncident
-                    user={user}
+                    user={data}
                     handleClick={handleMarkerClick}
                 />
                 <div className="absolute z-10 flex flex-col gap-3 top-24 left-6">
-                    <Tooltip arrow title={isSatelliteMode ? 'Roadmap' : 'Satellite'} placement="right">
+                    <Tooltip arrow title={isSatelliteMode ? 'Satellite' : 'Roadmap'} placement="right">
                         <IconButton
                             className="bg-white shadow-lg hover:bg-gray-200"
                             onClick={() => setIsSatelliteMode(prev => !prev)}
@@ -235,7 +282,7 @@ const Page = () => {
                                 key={i}
                                 position={{ lat: marker.Latitude, lng: marker.Longitude }}
                                 icon={{
-                                    url: marker.User.Photo,
+                                    url: '/incidentIcon.png',
                                     scaledSize: new window.google.maps.Size(24, 24),
                                     origin: new window.google.maps.Point(0, 0),
                                     anchor: new window.google.maps.Point(12, 0),
@@ -248,7 +295,7 @@ const Page = () => {
                                 position={{ lat: selectedMarker.Latitude, lng: selectedMarker.Longitude }}
                                 onCloseClick={() => setSelectedMarker(null)}
                             >
-                                <DetailInfoWindow data={selectedMarker} />
+                                <DetailInfoWindow data={selectedMarker} setSelectedMarker={setSelectedMarker} />
                             </InfoWindow>
                         )}
                     </GoogleMap>
@@ -260,7 +307,7 @@ const Page = () => {
 
 export default Page
 
-const DetailInfoWindow = ({ data }) => {
+const DetailInfoWindow = ({ data, setSelectedMarker }) => {
     const [openModalsolveIncident, setOpenModalsolveIncident] = useState(false)
 
     const copyToClipboard = useCallback(() => {
@@ -273,6 +320,7 @@ const DetailInfoWindow = ({ data }) => {
                 open={openModalsolveIncident}
                 setOpen={setOpenModalsolveIncident}
                 id={data?.id}
+                setSelectedMarker={setSelectedMarker}
             />
             <div className="relative flex flex-col items-center w-full gap-2">
                 <Image
@@ -347,4 +395,3 @@ const DetailInfoWindow = ({ data }) => {
         </div>
     )
 }
-

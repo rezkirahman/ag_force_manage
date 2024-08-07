@@ -1,8 +1,11 @@
 import ModalLayout from "@/components/ModalLayout"
 import { Icon } from "@iconify/react"
 import { Button } from "@mui/material"
+import deleteIcon from '../../public/icon/deleteIcon.json'
+import Lottie from "lottie-react"
 
-const ModalDeleteConfirmation = ({ open, setOpen, handleDelete, title, description, autoClose = false, loading }) => {
+
+const ModalDeleteConfirmation = ({ open, setOpen, handleDelete, title, description, autoClose = false, loading, textButton = '' }) => {
     return (
         <ModalLayout
             open={open}
@@ -11,9 +14,12 @@ const ModalDeleteConfirmation = ({ open, setOpen, handleDelete, title, descripti
             className={'max-w-[400px]'}
             onClose={() => setOpen(false)}
         >
-            <div className="space-y-4" align='center'>
-                <Icon icon='solar:trash-bin-2-bold-duotone' className='text-6xl text-red-600' />
-                <div className="">{description}</div>
+            <div className="flex flex-col gap-4">
+                <Lottie
+                    animationData={deleteIcon}
+                    className="w-32 h-auto mx-auto"
+                />
+                <div className="text-center">{description}</div>
                 <div className="grid grid-cols-2 gap-3">
                     <Button
                         variant="outlined"
@@ -37,7 +43,7 @@ const ModalDeleteConfirmation = ({ open, setOpen, handleDelete, title, descripti
                         component="span"
                         disabled={loading}
                     >
-                        {loading ? <Icon icon='mdi:loading' className='text-[26px] animate-spin' /> : 'Hapus'}
+                        {loading ? <Icon icon='mdi:loading' className='text-[26px] animate-spin' /> : (textButton ? textButton : 'Hapus')}
                     </Button>
                 </div>
             </div>

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 import { getMeRole } from '@/api/getMe'
+import { setCookie } from 'nookies'
 
 let globalMenu = []
 
@@ -46,6 +47,16 @@ const Navbar = () => {
             }
         }
     }, [setUnitKerja, suggestUnitKerja, unitKerja])
+
+    // useEffect(() => {
+    //     const cookies = parseCookies()
+    //     const unit = cookies.unit_kerja
+    //     if(unit){
+    //         if(!unitKerja){
+    //             setCookie
+    //         }
+    //     }
+    // }, [suggestUnitKerja])
 
     useEffect(() => {
         const isSettingExpand = pathname.includes('/settings')

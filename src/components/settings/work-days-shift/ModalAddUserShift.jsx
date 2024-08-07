@@ -6,6 +6,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import { useCallback, useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
 import { addUserShift, suggestUserShift } from "@/api/settings/work-days-shift"
+import PrimaryButton from "@/components/PrimaryButton"
 
 const ModalAddUserShift = ({ open, setOpen, refresh }) => {
     const { setOpenSnackbar, unitKerja } = useAppContext()
@@ -63,7 +64,7 @@ const ModalAddUserShift = ({ open, setOpen, refresh }) => {
             setOpen={setOpen}
             title='Tambah Karyawan Shift'
         >
-            <div className="h-[50vh] overflow-y-auto">
+            <div className="h-[50vh] overflow-y-auto py-2">
                 <Autocomplete
                     multiple
                     disableCloseOnSelect
@@ -119,14 +120,14 @@ const ModalAddUserShift = ({ open, setOpen, refresh }) => {
                 />
             </div>
             <div className="flex justify-end">
-                <Button
-                    variant="contained"
-                    size="large"
+                <PrimaryButton
+                    loading={loadingAddUser}
                     disabled={loadingAddUser || selectedUser.length === 0}
                     onClick={handleAddUserShift}
+                    className={'md:w-1/4'}
                 >
-                    {loadingAddUser ? <Icon icon='mdi:loading' className='text-2xl animate-spin' /> : 'Tambahkan'}
-                </Button>
+                    Tambahkan
+                </PrimaryButton>
             </div>
         </ModalLayout>
     )

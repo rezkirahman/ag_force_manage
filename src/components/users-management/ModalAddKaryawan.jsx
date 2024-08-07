@@ -9,6 +9,7 @@ import { divisionSuggestion, roleSuggestion } from "@/api/role"
 import { Icon } from "@iconify/react"
 import { createUser } from "@/api/users-management/users"
 import ErrorMessage from "../ErrorMessage"
+import PrimaryButton from "../PrimaryButton"
 
 const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
     const { unitKerja, setOpenSnackbar } = useAppContext()
@@ -210,15 +211,14 @@ const ModalAddKaryawan = ({ open, setOpen, refresh }) => {
                         </LocalizationProvider>
                     </div>
                     <div className="flex justify-end">
-                        <Button
-                            className="w-full md:w-fit"
-                            variant="contained"
-                            size="large"
+                        <PrimaryButton
                             disabled={loadingCreateKaryawan || !isReadySubmit}
+                            loading={loadingCreateKaryawan}
                             onClick={handleAddKaryawan}
+                            className="w-full md:w-1/4"
                         >
-                            {loadingCreateKaryawan ? <Icon icon='mdi:loading' className='text-[27px] animate-spin' /> : 'Tambahkan'}
-                        </Button>
+                            Tambahkan
+                        </PrimaryButton>
                     </div>
                 </form>
             </div>

@@ -101,7 +101,7 @@ const LocationTab = () => {
                         size="large"
                         variant="contained"
                         onClick={() => setOpenAddLocation(true)}
-                        startIcon={<Icon icon={'mdi:plus'}/>}
+                        startIcon={<Icon icon={'mdi:plus'} />}
                     >
                         Tambah
                     </Button>
@@ -125,9 +125,11 @@ const LocationTab = () => {
                                 </BodyItem>
                                 <BodyItem>{item.radius} m</BodyItem>
                                 <BodyItem>
-                                    <Tooltip title={item.address} arrow>
-                                        <h3 className="line-clamp-1">{item.address}</h3>
-                                    </Tooltip>
+                                    <div className="w-fit">
+                                        <Tooltip title={item.address} arrow>
+                                            <h3 className="line-clamp-1">{item.address}</h3>
+                                        </Tooltip>
+                                    </div>
                                 </BodyItem>
                                 <BodyItem end>
                                     <div className='flex items-center justify-center gap-2'>
@@ -139,7 +141,7 @@ const LocationTab = () => {
                                                     setOpenEditLocation(true)
                                                 }}
                                             >
-                                                <Icon icon={'material-symbols:edit'} className="text-lg" />
+                                                <Icon icon={'material-symbols:edit'} />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title='Hapus' arrow>
@@ -151,7 +153,7 @@ const LocationTab = () => {
                                                     setOpenModalDelete(true)
                                                 }}
                                             >
-                                                <Icon icon={'material-symbols:delete'} className="text-lg" />
+                                                <Icon icon={'material-symbols:delete'} />
                                             </IconButton>
                                         </Tooltip>
                                     </div>

@@ -7,7 +7,7 @@ import PrimaryButton from "../PrimaryButton"
 import { solveIncident } from "@/api/live-panic-incident/panic-incident"
 
 
-const ModalSolve = ({ open, setOpen, id }) => {
+const ModalSolve = ({ open, setOpen, id, setSelectedMarker }) => {
     const { setOpenSnackbar, unitKerja } = useAppContext()
     const [loading, setLoading] = useState(false)
     const [description, setDescription] = useState('')
@@ -22,24 +22,18 @@ const ModalSolve = ({ open, setOpen, id }) => {
                 note: description,
             }
         })
-        console.log(response?.response?.data?.message?.description);
         const { data } = response
         if (data?.data) {
             setOpenSnackbar({
                 open: true,
                 severity: 'success',
-                message: 'Berhasil mengubah profil'
+                message: 'Berhasil Menyelesaikan Insiden'
             })
+            setSelectedMarker(null)
             setOpen(false)
-        } else {
-            setOpenSnackbar({
-                open: true,
-                severity: 'error',
-                message: response?.response?.data?.message?.description
-            })
-        }
+        } 
         setLoading(false)
-    }, [description, id, setOpen, setOpenSnackbar, unitKerja])
+    }, [description, id, setOpen, setOpenSnackbar, setSelectedMarker, unitKerja])
 
     useEffect(() => {
         if (open) {

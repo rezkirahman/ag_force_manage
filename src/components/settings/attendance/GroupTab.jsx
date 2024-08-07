@@ -125,7 +125,7 @@ const GroupTab = () => {
                                     <h3 className='line-clamp-2'>{item.location_names}</h3>
                                 </BodyItem>
                                 <BodyItem end>
-                                    <div className='flex items-center justify-center gap-2'>
+                                    <div className='flex items-center justify-start gap-2'>
                                         <Tooltip title='Ubah' arrow>
                                             <IconButton
                                                 size='small'
@@ -134,7 +134,7 @@ const GroupTab = () => {
                                                     setOpenEditGroup(true)
                                                 }}
                                             >
-                                                <Icon icon={'material-symbols:edit'} className="text-lg" />
+                                                <Icon icon={'material-symbols:edit'}/>
                                             </IconButton>
                                         </Tooltip>
                                         {!item.is_anywhere &&
@@ -146,8 +146,9 @@ const GroupTab = () => {
                                                         setSelectedGroup(item)
                                                         setOpenDeleteGroup(true)
                                                     }}
+                                                    className='bg'
                                                 >
-                                                    <Icon icon={'material-symbols:delete'} className="text-lg" />
+                                                    <Icon icon={'material-symbols:delete'}/>
                                                 </IconButton>
                                             </Tooltip>
                                         }

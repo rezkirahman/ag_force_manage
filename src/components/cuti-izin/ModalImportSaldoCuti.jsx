@@ -5,7 +5,7 @@ import PrimaryButton from '../PrimaryButton'
 import { Alert, Autocomplete, Button, Checkbox, FormControlLabel, TextField } from '@mui/material'
 import FileField from '../FileField'
 import { Icon } from '@iconify/react'
-import { templateSaldoCuti } from '@/api/cuti&izin/cutiIzin'
+import { importSaldoCuti, templateSaldoCuti } from '@/api/cuti&izin/cutiIzin'
 import { useRouter } from 'next/navigation'
 
 const ModalImportSaldoCuti = ({ open, setOpen }) => {
@@ -18,12 +18,22 @@ const ModalImportSaldoCuti = ({ open, setOpen }) => {
     const [loadingDownload, setLoadingDownload] = useState(false)
 
     const handleImport = useCallback(async () => {
-        setOpenModalResult(false)
-    }, [])
-
-    useEffect(() => {
-        if (file) setAllowSubmit(true)
-    }, [file])
+        if (!unitKerja) return
+        setLoading(true)
+        const { data } = await importSaldoCuti({
+            unitKerja: unitKerja.id,
+            file: file
+        })
+        if (data?.data) {
+            setOpenSnackbar({
+                open: true,
+                message: 'Import Saldo Cuti Berhasil',
+                severity: 'success',
+            })
+            setOpenModalResult(true)
+        }
+        setLoading(false)
+    }, [file, setOpenSnackbar, unitKerja])
 
     const handleDownloadTemplate = useCallback(async () => {
         if (!unitKerja) return
@@ -42,6 +52,14 @@ const ModalImportSaldoCuti = ({ open, setOpen }) => {
             setOpenModalResult(false)
         }
     }, [open])
+
+    useEffect(() => {
+        if (file) {
+            setAllowSubmit(true)
+        } else {
+            setAllowSubmit(false)
+        }
+    }, [file])
 
     return (
         <ModalLayout
@@ -72,7 +90,7 @@ const ModalImportSaldoCuti = ({ open, setOpen }) => {
             <div className='flex justify-end'>
                 <PrimaryButton
                     loading={loading}
-                    onClick={() => setOpenModalResult(true)}
+                    onClick={handleImport}
                     className={'w-full md:w-1/4'}
                     disabled={loading || !allowSubmit}
                 >

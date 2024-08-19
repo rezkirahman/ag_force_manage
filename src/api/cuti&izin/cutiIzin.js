@@ -61,3 +61,20 @@ export const templateSaldoCuti = async ({ unitKerja }) => {
     })
 
 }
+
+export const importSaldoCuti =async ({unitKerja, file})=>{
+    const formData = new FormData()
+    formData.append('excel', file)
+    const signature = MakeSignatureHeader(`/api/v1/cisw/v2/import-saldo`, 'POST', '{}')
+    return await api.post(`/v1/cisw/v2/import-saldo`, formData, {
+        headers: {
+            ...signature,
+            'X-Unit-Kerja': unitKerja,
+            'Content-Type': 'multipart/form-data'
+        }
+    }).then((response) => {
+        return response
+    }).catch((error) => {
+        return error
+    })
+}

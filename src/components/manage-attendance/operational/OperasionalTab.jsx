@@ -110,27 +110,26 @@ const OperasionalTab = () => {
                 user={selectedJournal}
             />
             <div className='space-y-6'>
-                <div className='flex flex-wrap items-start justify-between gap-3'>
-                    <h3 className='text-lg font-semibold'>Operasional</h3>
-                    <div className='flex items-center justify-end gap-3 grow md:grow-0'>
-                        <TextField
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            label='Pencarian'
-                            className='grow'
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start"><Icon icon={'material-symbols:search'} /></InputAdornment>,
-                            }}
-                        />
+                <div className='flex items-center justify-between gap-3'>
+                    <TextField
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        label='Pencarian'
+                        className='w-full md:w-[300px]'
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start"><Icon icon={'material-symbols:search'} /></InputAdornment>,
+                        }}
+                    />
+                    <div className='flex items-center justify-end gap-3'>
                         <Button
-                        size='large'
-                        variant='contained'
-                        color='primary'
-                        onClick={() => setOpenModalFilter(true)}
-                        startIcon={<Icon icon="mage:filter-fill" />}
-                    >
-                        Filter
-                    </Button>
+                            size='large'
+                            variant='contained'
+                            color='primary'
+                            onClick={() => setOpenModalFilter(true)}
+                            startIcon={<Icon icon="mage:filter-fill" />}
+                        >
+                            Filter
+                        </Button>
                         <Tooltip title='Unduh' arrow>
                             <IconButton
                                 color='primary'
@@ -193,7 +192,6 @@ const OperasionalTab = () => {
                         ))}
                     </TableBody>
                 </Table>
-                {list.length > 0 && (
                     <Pagination
                         page={page}
                         count={totalPage}
@@ -201,8 +199,8 @@ const OperasionalTab = () => {
                         color='primary'
                         size='small'
                         className='mx-auto mt-4 w-fit'
+                        disabled={loadingList}
                     />
-                )}
             </div>
         </Container>
     )

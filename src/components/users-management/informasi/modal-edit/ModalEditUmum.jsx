@@ -89,6 +89,7 @@ const ModalEditUmum = ({ open, setOpen, refresh, title, data }) => {
             refresh={refresh}
             loading={loadingUpdate}
             handleClick={handleUpdate}
+            edit
         >
             <TextField
                 value={rencanaKerja}

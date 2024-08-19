@@ -227,15 +227,15 @@ const KaryawanTab = () => {
                                     onClick={() => setOpenModalAddKaryawan(true)}
                                 >
                                     <div className='flex items-center gap-2'>
-                                        <Icon icon='wpf:add-user' />
+                                        <Icon icon='mage:user-plus' />
                                         <h3>Tambah</h3>
                                     </div>
                                 </MenuItem>
                                 <MenuItem
-                                    onClick={() => setOpenModalImportWarga(true)}
+                                    // onClick={() => setOpenModalImportWarga(true)}
                                 >
                                     <div className='flex items-center gap-2'>
-                                        <Icon icon='mage:file-upload-fill' />
+                                        <Icon icon='mage:file-upload' />
                                         <h3>Import</h3>
                                     </div>
                                 </MenuItem>

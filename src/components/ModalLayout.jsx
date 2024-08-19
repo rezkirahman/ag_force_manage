@@ -3,11 +3,11 @@ import { IconButton, Modal } from "@mui/material"
 import { Icon } from "@iconify/react"
 import { motion } from "framer-motion"
 
-const ModalLayout = ({ open, setOpen, title, className, children, onClose = null, fit = false, disableCloseButton = false }) => {
+const ModalLayout = ({ open, setOpen, title, className, children, onClose = null, fit = false, disableCloseButton = false, handleClose = null, transparent = false }) => {
     return (
         <Modal
             open={open}
-            className="flex items-center justify-center"
+            className={`flex items-center justify-center ${transparent?'opacity-0':'opacity-100'} transition-all`}
             onClose={onClose}
         >
             <motion.div
@@ -22,7 +22,7 @@ const ModalLayout = ({ open, setOpen, title, className, children, onClose = null
                         <h3 className="text-lg font-semibold">{title}</h3>
                         {!disableCloseButton && (
                             <IconButton
-                                onClick={() => setOpen(false)}
+                                onClick={() => { handleClose ? handleClose() : setOpen(false) }}
                             >
                                 <Icon icon='material-symbols:close' className='text-lg text-gray-600' />
                             </IconButton>

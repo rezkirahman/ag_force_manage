@@ -13,7 +13,6 @@ export const listLocationUnit = async (unitKerja, category) => {
     }).then((response) => {
         return response
     }).catch((error) => {
-        console.error(error)
         return error
     })
 }
@@ -29,7 +28,6 @@ export const listLocationPenugasan = async (unitKerja, body) => {
     }).then((response) => {
         return response
     }).catch((error) => {
-        console.error(error)
         return error
     })
 
@@ -45,7 +43,6 @@ export const listUnitBussiness = async ({unitKerja}) => {
     }).then((response) => {
         return response
     }).catch((error) => {
-        console.error(error)
         return error
     })
 }

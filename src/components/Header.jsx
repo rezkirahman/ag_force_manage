@@ -52,11 +52,12 @@ const Header = ({ isMenuButton = false }) => {
                     <div className='flex items-center gap-2 normal-case'>
                         <h3 className='text-gray-600'>{name?.split(' ').slice(0, 2).join(' ')}</h3>
                         <Image
-                            src={image || 'https://pai.agforce.co.id/assets/user/f35dca8d2f0a4bf6a0da0fc1a113f71d.png'}
+                            src={image || '/defaultProfile.png'}
                             width={100}
                             height={100}
                             alt='profile'
                             className='object-cover object-top w-10 h-10 bg-gray-200 rounded-full'
+                            priority
                         />
                     </div>
                 </Button>
@@ -128,7 +129,7 @@ const MenuProfile = ({ anchorEl, open, setAnchorEl, name, photo, role }) => {
                 </div>
                 <div className='flex items-center gap-3'>
                     <Image
-                        src={photo || 'https://pai.agforce.co.id/assets/user/f35dca8d2f0a4bf6a0da0fc1a113f71d.png'}
+                        src={photo || '/defaultProfile.png'}
                         width={400}
                         height={400}
                         alt='profile'

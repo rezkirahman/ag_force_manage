@@ -36,7 +36,7 @@ const Page = () => {
                     </div>
                 </div>
             </Container>
-            <div className='grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4'>
+            <div className='grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4'>
                 <NewsCard news={''} />
             </div>
         </Layout>
@@ -60,7 +60,7 @@ const NewsCard = ({ news }) => {
                 height={500}
                 className='object-cover object-top w-full h-40'
             />
-            <div className='absolute px-3 py-1 text-xs bg-green-700 rounded-full top-6 right-6 md:right-4'>
+            <div className='absolute top-0 px-3 py-1 text-xs bg-green-700 rounded-full right-2 md:right-4'>
                 <h3 className='text-xs font-semibold text-white'>Disetujui</h3>
             </div>
             <div className='flex flex-col gap-4 px-4 pb-6 md:px-6'>

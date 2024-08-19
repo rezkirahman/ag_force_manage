@@ -1,21 +1,41 @@
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import ProfilingContainer from './ProfilingContainer'
 import { InformasiFormatting } from '../InformasiTab'
 import ModalEditUmum from '../modal-edit/ModalEditUmum'
+import { useAppContext } from '@/context'
+import { useParams } from 'next/navigation'
+import { getProfilingData } from '@/api/users-management/profiling'
 
-const UmumTab = ({ MenuButton, title, data, refresh }) => {
+const UmumTab = ({ MenuButton, title }) => {
+    const params = useParams()
+    const { unitKerja } = useAppContext()
+    const [data, setData] = useState({})
     const [openModalEdit, setOpenModalEdit] = useState(false)
+
+    const handleData = useCallback(async () => {
+        if (!unitKerja) return
+        const { data } = await getProfilingData({
+            unitKerja: unitKerja?.id,
+            id: params?.id,
+            type: 'umum'
+        })
+        if (data?.data) {
+            setData(data.data)
+        }
+    }, [params, unitKerja])
+    useEffect(() => { handleData() }, [handleData])
+    
     return (
         <ProfilingContainer
-        MenuButton={MenuButton}
-        title={title}
-        setOpenEdit={setOpenModalEdit}
+            MenuButton={MenuButton}
+            title={title}
+            setOpenEdit={setOpenModalEdit}
         >
-             <ModalEditUmum
+            <ModalEditUmum
                 open={openModalEdit}
                 setOpen={setOpenModalEdit}
                 title={title}
-                refresh={refresh}
+                refresh={handleData}
                 data={data}
             />
             <InformasiFormatting label='Rencana Tahun Bekerja' value={data?.rencana_kerja} />

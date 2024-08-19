@@ -1,28 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import ProfilingContainer from './ProfilingContainer'
 import { InformasiFormatting } from '../InformasiTab'
 import ModalEditPendidikan from '../modal-edit/ModalEditPendidikan'
+import { useParams } from 'next/navigation'
+import { useAppContext } from '@/context'
+import { getProfilingData } from '@/api/users-management/profiling'
 
-const PendidikanTab = ({ MenuButton, title, data, refresh }) => {
+const PendidikanTab = ({ MenuButton, title }) => {
+    const params = useParams()
+    const { unitKerja } = useAppContext()
+    const [data, setData] = useState({})
     const [openModalEdit, setOpenModalEdit] = useState(false)
     const [riwayatPendidikan, setRiwayatPendidikan] = useState([])
-    
-    useEffect(() => {
-        if (data?.riwayat_pendidikan) {
-            setRiwayatPendidikan(data?.riwayat_pendidikan || [])
+
+    const handleData = useCallback(async () => {
+        if (!unitKerja) return
+        const { data } = await getProfilingData({
+            unitKerja: unitKerja?.id,
+            id: params?.id,
+            type: 'pendidikan'
+        })
+        if (data?.data) {
+            setData(data.data)
+            setRiwayatPendidikan(data?.data?.riwayat_pendidikan || [])
         }
-    }, [data])
+    }, [params, unitKerja])
+    useEffect(() => { handleData() }, [handleData])
+
     return (
         <ProfilingContainer MenuButton={MenuButton} title={title} setOpenEdit={setOpenModalEdit}>
             <ModalEditPendidikan
                 open={openModalEdit}
                 setOpen={setOpenModalEdit}
                 title={title}
-                refresh={refresh}
+                refresh={handleData}
                 data={data}
             />
             {riwayatPendidikan?.map((item, index) => (
-                <>
+                <div key={index} className='space-y-3'>
                     <h3 className='text-xs font-semibold'>Riwayat Pendidikan {index + 1}</h3>
                     <InformasiFormatting label='Nama Sekolah' value={item?.nama_sekolah} />
                     <InformasiFormatting label='Lokasi Sekolah' value={item?.lokasi_sekolah} />
@@ -32,7 +47,7 @@ const PendidikanTab = ({ MenuButton, title, data, refresh }) => {
                     <InformasiFormatting label='Gelar Pendidikan' value={item?.gelar_pendidikan} />
                     <InformasiFormatting label='Keterangan' value={item?.keterangan} />
 
-                </>
+                </div>
             ))}
             <hr />
             <InformasiFormatting label='Rencana Pendidikan untuk Bersekolah lagi' value={data?.rencana_pendidikan?.rencana_sekolah ? 'Ya' : 'Tidak'} />

@@ -21,7 +21,7 @@ const ModalDetailJournal = ({ open, setOpen, user }) => {
                 <div className='flex items-start justify-between gap-3'>
                     <div className='flex items-center gap-2'>
                         <Image
-                            src={user?.user_photo || 'https://pai.agforce.co.id/assets/user/f35dca8d2f0a4bf6a0da0fc1a113f71d.png'}
+                            src={user?.user_photo || 'defaultProfile.png'}
                             alt='profile'
                             width={100}
                             height={100}

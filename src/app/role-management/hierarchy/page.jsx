@@ -1,4 +1,7 @@
 'use client'
+import dynamic from 'next/dynamic'
+const Tree = dynamic(() => import('react-organizational-chart').then(mod => mod.Tree), { ssr: false })
+const TreeNode = dynamic(() => import('react-organizational-chart').then(mod => mod.TreeNode), { ssr: false })
 import { listHierarchy, resetHierarchy } from '@/api/role-management/hierarchy'
 import Header from '@/components/Header'
 import Layout from '@/components/Layout'
@@ -6,24 +9,26 @@ import { theme } from '@/config/materialui-config'
 import { useAppContext } from '@/context'
 import { Button, ThemeProvider } from '@mui/material'
 import React, { useEffect, useCallback, useState } from 'react'
-import { Tree, TreeNode } from 'react-organizational-chart'
 import CardRole from '@/components/role-management/hierarchy/CardRole'
 import SnackbarNotification from '@/components/SnackbarNotification'
 import { Icon } from '@iconify/react'
 import ModalDeleteConfirmation from '@/components/ModalDeleteConfirmation'
 import { motion, useMotionValue } from 'framer-motion'
 
-const Page = () => {
+if (typeof window !== 'undefined') {
     localStorage.setItem('isZoomActive', 'true')
+}
+
+const Page = () => {
     const { unitKerja, setOpenSnackbar } = useAppContext()
     const [hierarchy, setHierarchy] = useState([])
     const [openModalReset, setOpenModalReset] = useState(false)
     const [loadingReset, setLoadingReset] = useState(false)
     const zoom = useMotionValue(1)
-    const initialX = window.innerWidth / 2 - 1000
-    const initialY = window.innerHeight / 2 - 1000
-    const x = useMotionValue(initialX)
-    const y = useMotionValue(initialY)
+    // const initialX = typeof window !== 'undefined' ? window.innerWidth / 2 - 1000 : 0
+    // const initialY = typeof window !== 'undefined' ? window.innerHeight / 2 - 1000 : 0
+    const x = useMotionValue(0)
+    const y = useMotionValue(0)
 
     const handleListHierarchy = useCallback(async () => {
         if (!unitKerja) return
@@ -63,6 +68,9 @@ const Page = () => {
                 <Layout></Layout>
             </div>
             <div className="relative w-screen h-screen text-sm text-gray-600 overflow-clip bg-primary/5">
+                <div className="absolute inset-x-0 z-30 px-6 space-y-4 md:px-8 lg:px-12 top-4">
+                    <Header isMenuButton />
+                </div>
                 <ModalDeleteConfirmation
                     title={'Reset Struktur Jabatan'}
                     open={openModalReset}
@@ -72,9 +80,6 @@ const Page = () => {
                     handleDelete={handleReset}
                     description={<h3>Apakah Anda yakin mereset struktur jabatan?</h3>}
                 />
-                <div className="absolute inset-x-0 z-30 px-6 space-y-4 md:px-8 lg:px-12 top-4">
-                    <Header isMenuButton />
-                </div>
                 <div className='absolute z-30 top-24 left-6 md:left-8 lg:left-12'>
                     <Button
                         variant='contained'

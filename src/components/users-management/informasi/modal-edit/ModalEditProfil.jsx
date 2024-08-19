@@ -70,7 +70,7 @@ const ModalEditProfil = ({ open, setOpen, refresh, title, data }) => {
             })
             refresh()
             setOpen(false)
-        }else{
+        } else {
             setOpenSnackbar({
                 open: true,
                 severity: 'error',
@@ -102,6 +102,7 @@ const ModalEditProfil = ({ open, setOpen, refresh, title, data }) => {
             title={title}
             loading={loadingUpdate}
             handleClick={handleUpdate}
+            edit
         >
             <TextField
                 value={id}
@@ -144,11 +145,10 @@ const ModalEditProfil = ({ open, setOpen, refresh, title, data }) => {
                 variant="outlined"
                 className='w-full'
                 value={phone}
-                inputProps={{ maxLength: 15 }}
                 onChange={(e) => {
-                    const re = /^[0-9\b]+$/;
+                    const re = /^[0-9\b+-]+$/;
                     if (e.target.value === '' || re.test(e.target.value)) {
-                        setPhone(e.target.value)
+                      setPhone(e.target.value)
                     }
                 }}
             />

@@ -24,7 +24,7 @@ const Page = ({ params }) => {
         icon: 'fluent:document-person-16-filled'
     })
     const [name, setName] = useState('')
-    const [photo, setPhoto] = useState('https://pai.agforce.co.id/assets/user/f35dca8d2f0a4bf6a0da0fc1a113f71d.png')
+    const [photo, setPhoto] = useState('/defaultProfile.png')
     const [jabatan, setJabatan] = useState([])
     const [profile, setProfile] = useState({})
     const [openModalChangePhoto, setOpenModalChangePhoto] = useState(false)
@@ -46,7 +46,7 @@ const Page = ({ params }) => {
                 message: 'Gagal mendapatkan data karyawan'
             })
             setProfile({})
-            setPhoto('https://pai.agforce.co.id/assets/user/f35dca8d2f0a4bf6a0da0fc1a113f71d.png')
+            setPhoto('/defaultProfile.png')
             setName('')
             setJabatan([])
             setIsNotLoaded(true)

@@ -4,7 +4,7 @@ import { useParams } from "next/navigation"
 import { useAppContext } from "@/context"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
-import { FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Tooltip } from "@mui/material"
 import dayjs from "dayjs"
 import { Icon } from "@iconify/react"
 import { updateProfilingData } from "@/api/users-management/profiling"
@@ -66,47 +66,54 @@ const ModalEditPendidikan = ({ open, setOpen, refresh, title, data }) => {
             refresh={refresh}
             loading={loadingUpdate}
             handleClick={handleUpdate}
+            edit
         >
-            <div className="flex items-start justify-between">
-                <h3 className="font-semibold">Riwayat Pendidikan</h3>
-                <IconButton
-                    onClick={() => {
-                        setRiwayatPendidikan([...riwayatPendidikan, { vaksin: '', tanggal: dayjs().format('DD/MM/YYYY') }])
-                        setTimeout(() => {
-                            if (divRef.current) {
-                                divRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                            }
-                        }, 0)
-                    }}
-                    color="primary"
-                    size="medium"
-                    className="text-white bg-primary hover:bg-primary"
-                >
-                    <Icon icon='akar-icons:plus' />
-                </IconButton>
+            <div className="space-y-6">
+                <div className="space-y-3">
+                    <div className="sticky z-10 flex items-start justify-between bg-white -top-2">
+                        <h3 className="font-semibold">Riwayat Pendidikan</h3>
+                        <Button
+                            onClick={() => {
+                                setRiwayatPendidikan([...riwayatPendidikan, { date: '', tanggal: dayjs().format('DD/MM/YYYY') }])
+                                setTimeout(() => {
+                                    if (divRef.current) {
+                                        divRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                                    }
+                                }, 0)
+                            }}
+                            color="primary"
+                            size="medium"
+                            startIcon={<Icon icon='icon-park-twotone:add-one' />}
+                        >
+                            Tambah
+                        </Button>
+                    </div>
+                    <div ref={divRef}>
+                        <RiwayatPendidikan items={riwayatPendidikan} setItems={setRiwayatPendidikan} />
+                    </div>
+                    <hr />
+                </div>
+                <div className="space-y-3">
+                    <FormControl fullWidth>
+                        <InputLabel>Rencana Pendidikan untuk Bersekolah lagi</InputLabel>
+                        <Select
+                            label="Rencana Pendidikan untuk Bersekolah lagi"
+                            value={rencanaPendidikan.rencana_sekolah}
+                            onChange={(e) => setRencanaPendidikan({ ...rencanaPendidikan, rencana_sekolah: e.target.value })}
+                        >
+                            <MenuItem value={true}>Ya</MenuItem>
+                            <MenuItem value={false}>Tidak</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        disabled={!rencanaPendidikan.rencana_sekolah}
+                        fullWidth
+                        label='Nama Sekolah'
+                        value={rencanaPendidikan.nama_sekolah}
+                        onChange={(e) => setRencanaPendidikan({ ...rencanaPendidikan, nama_sekolah: e.target.value })}
+                    />
+                </div>
             </div>
-            <div ref={divRef}>
-                <RiwayatPendidikan items={riwayatPendidikan} setItems={setRiwayatPendidikan} />
-            </div>
-            <hr />
-            <FormControl fullWidth>
-                <InputLabel>Rencana Pendidikan untuk Bersekolah lagi</InputLabel>
-                <Select
-                    label="Rencana Pendidikan untuk Bersekolah lagi"
-                    value={rencanaPendidikan.rencana_sekolah}
-                    onChange={(e) => setRencanaPendidikan({ ...rencanaPendidikan, rencana_sekolah: e.target.value })}
-                >
-                    <MenuItem value={true}>Ya</MenuItem>
-                    <MenuItem value={false}>Tidak</MenuItem>
-                </Select>
-            </FormControl>
-            <TextField
-                disabled={!rencanaPendidikan.rencana_sekolah}
-                fullWidth
-                label='Nama Sekolah'
-                value={rencanaPendidikan.nama_sekolah}
-                onChange={(e) => setRencanaPendidikan({ ...rencanaPendidikan, nama_sekolah: e.target.value })}
-            />
         </ModalEditProfilingLayout>
     )
 }
@@ -128,18 +135,20 @@ const RiwayatPendidikan = ({ items, setItems }) => {
     }
 
     return (
-        <div className='space-y-3'>
+        <div className='space-y-4'>
             {items?.map((data, index) => (
-                <div key={index} className='p-4 space-y-2 rounded-xl bg-slate-100'>
+                <div key={index} className="p-4 space-y-2 rounded-xl ring-2 ring-inset ring-gray-200">
                     <div className='flex items-center justify-between'>
                         <h3 className="font-medium">Riwayat Pendidikan {index + 1}</h3>
-                        <IconButton
-                            onClick={() => handleRemoveItem(index)}
-                            className='text-white bg-red-700 hover:bg-red-700'
-                            size="small"
-                        >
-                            <Icon icon='akar-icons:minus' />
-                        </IconButton>
+                        <Tooltip title="Hapus" arrow>
+                            <IconButton
+                                onClick={() => handleRemoveItem(index)}
+                                size="small"
+                                color="error"
+                            >
+                                <Icon icon="fluent:delete-28-filled" />
+                            </IconButton>
+                        </Tooltip>
                     </div>
                     <div className='space-y-3'>
                         <TextField

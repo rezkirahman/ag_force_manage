@@ -85,6 +85,7 @@ const ModalEditLegal = ({ open, setOpen, refresh, title, data }) => {
             refresh={refresh}
             loading={loadingUpdate}
             handleClick={handleUpdate}
+            edit
         >
             <FormControl fullWidth>
                 <InputLabel>Status Pajak</InputLabel>

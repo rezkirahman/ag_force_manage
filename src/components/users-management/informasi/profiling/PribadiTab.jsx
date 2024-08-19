@@ -1,18 +1,34 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import ProfilingContainer from './ProfilingContainer'
 import { InformasiFormatting } from '../InformasiTab'
 import dayjs from 'dayjs'
 import ModalEditPribadi from '../modal-edit/ModalEditPribadi'
+import { useAppContext } from '@/context'
+import { getProfilingData } from '@/api/users-management/profiling'
+import { useParams } from 'next/navigation'
 
-const PribadiTab = ({ MenuButton, title, data, refresh }) => {
+const PribadiTab = ({ MenuButton, title }) => {
+    const params =useParams()
+    const { unitKerja } = useAppContext()
+    const [data, setData] = useState({})
     const [openModalEdit, setOpenModalEdit] = useState(false)
     const [alamatKTP, setAlamatKTP] = useState('')
     const [alamatDomisili, setAlamatDomisili] = useState('')
 
-    useEffect(() => {
-        setAlamatKTP(data?.postal_code_ktp)
-        setAlamatDomisili(data?.postal_code_domisili)
-    }, [data])
+    const handleData = useCallback(async () => {
+        if (!unitKerja) return
+        const { data } = await getProfilingData({
+            unitKerja: unitKerja?.id,
+            id: params?.id,
+            type: 'pribadi'
+        })
+        if(data?.data){
+            setData(data?.data)
+            setAlamatKTP(data?.data?.postal_code_ktp)
+            setAlamatDomisili(data?.data?.postal_code_domisili)
+        }
+    }, [params, unitKerja])
+    useEffect(() => {handleData()}, [handleData])
 
     return (
         <ProfilingContainer
@@ -24,7 +40,7 @@ const PribadiTab = ({ MenuButton, title, data, refresh }) => {
                 open={openModalEdit}
                 setOpen={setOpenModalEdit}
                 title={title}
-                refresh={refresh}
+                refresh={handleData}
                 data={data}
             />
             <InformasiFormatting label='Jenis Identitas' value={data?.jenis_identitas} />

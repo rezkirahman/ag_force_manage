@@ -1,18 +1,37 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import ProfilingContainer from './ProfilingContainer'
 import { InformasiFormatting } from '../InformasiTab'
 import ModalEditKesehatan from '../modal-edit/ModalEditKesehatan'
+import { useParams } from 'next/navigation'
+import { useAppContext } from '@/context'
+import { getProfilingData } from '@/api/users-management/profiling'
 
-const KesehatanTab = ({ MenuButton, title, data, refresh }) => {
+const KesehatanTab = ({ MenuButton, title }) => {
+    const params = useParams()
+    const { unitKerja } = useAppContext()
     const [openModalEdit, setOpenModalEdit] = useState(false)
-    const image = 'https://images.unsplash.com/photo-1633171675586-3c6d4f6f8d9e'
+    const [data, setData] = useState({})
+
+    const handleData = useCallback(async () => {
+        if (!unitKerja) return
+        const { data } = await getProfilingData({
+            unitKerja: unitKerja?.id,
+            id: params?.id,
+            type: 'kesehatan'
+        })
+        if (data?.data) {
+            setData(data.data)
+        }
+    }, [params, unitKerja])
+    useEffect(() => { handleData() }, [handleData])
+
     return (
         <ProfilingContainer MenuButton={MenuButton} title={title} setOpenEdit={setOpenModalEdit}>
             <ModalEditKesehatan
                 open={openModalEdit}
                 setOpen={setOpenModalEdit}
                 title={title}
-                refresh={refresh}
+                refresh={handleData}
                 data={data}
             />
             <InformasiFormatting label={'Sering berolahraga'} value={data?.is_most_olahraga ? 'Ya' : 'Tidak'} />

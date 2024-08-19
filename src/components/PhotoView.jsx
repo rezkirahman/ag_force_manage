@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 const PhotoView = ({ photo }) => {
     const [open, setOpen] = useState(false)
-    const preview = photo ? photo : 'https://pai.agforce.co.id/assets/user/f35dca8d2f0a4bf6a0da0fc1a113f71d.png'
+    const preview = photo || 'defaultProfile.png'
     return (
         <div>
             <Modal
@@ -35,21 +35,22 @@ const PhotoView = ({ photo }) => {
                 </div>
             </Modal>
             <div className='relative w-full group'>
+                <div className='absolute inset-0 z-10'>
+                    <IconButton
+                        onClick={() => setOpen(true)}
+                        className='w-full h-full opacity-0 group-hover:opacity-100'
+                    >
+                        <Icon icon={'mdi-eye'} className='text-xl' />
+                    </IconButton>
+                </div>
                 <Image
                     alt='photoview'
                     src={preview}
                     width={100}
                     height={100}
-                    className='relative object-cover object-top w-full rounded-full aspect-square bg-slate-100'
+                    className='object-cover object-top w-full rounded-full aspect-square bg-slate-100'
                     priority
                 />
-
-                <IconButton
-                    onClick={() => setOpen(true)}
-                    className='absolute inset-0 z-10 opacity-0 group-hover:opacity-100'
-                >
-                    <Icon icon={'mdi-eye'} className='text-xl' />
-                </IconButton>
             </div>
         </div>
     )

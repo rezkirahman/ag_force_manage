@@ -1,21 +1,43 @@
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import ProfilingContainer from './ProfilingContainer'
 import { InformasiFormatting } from '../InformasiTab'
 import ModalEditKeahlian from '../modal-edit/ModalEditKeahlian'
+import { useParams } from 'next/navigation'
+import { useAppContext } from '@/context'
+import { getProfilingData } from '@/api/users-management/profiling'
 
-const KeahlianTab = ({ MenuButton, title, data, refresh }) => {
+const KeahlianTab = ({ MenuButton, title }) => {
+    const params = useParams()
+    const { unitKerja } = useAppContext()
     const [openModalEdit, setOpenModalEdit] = useState(false)
-    const image = 'https://images.unsplash.com/photo-1633171675586-3c6d4f6f8d9e'
+    const [data, setData] = useState({})
+
+    const handleData = useCallback(async () => {
+        if (!unitKerja) return
+        const { data } = await getProfilingData({
+            unitKerja: unitKerja?.id,
+            id: params?.id,
+            type: 'keahlian'
+        })
+        if (data?.data) {
+            setData(data.data)
+        }
+    }, [params, unitKerja])
+    useEffect(() => { handleData() }, [handleData])
+
     return (
         <ProfilingContainer MenuButton={MenuButton} title={title} setOpenEdit={setOpenModalEdit}>
             <ModalEditKeahlian
                 open={openModalEdit}
                 setOpen={setOpenModalEdit}
                 title={title}
-                refresh={refresh}
+                refresh={handleData}
                 data={data}
             />
-            <InformasiFormatting label='Nama Lengkap' value={data?.full_name} />
+            <InformasiFormatting label='Keahlian Teknis (Hard Skill)' value={data?.hard_skill} />
+            <InformasiFormatting label='Keahlian Non Teknis (Soft Skill)' value={data?.soft_skill} />
+            <InformasiFormatting label='Kemampuan Berbahasa' value={data?.bahasa} />
+            <InformasiFormatting label='Rekomendasi & Penilaian oleh Manajemen' value={data?.rekomendasi} />
         </ProfilingContainer>
     )
 }

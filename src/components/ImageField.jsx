@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
 import Image from 'next/image'
+import { useAppContext } from '@/context'
 
 
 const ImageField = ({ imageFile, setImageFile, imageKey = 'image' }) => {
+    const { setOpenSnackbar } = useAppContext()
     const [previewUrl, setPreviewUrl] = useState(null)
     const FILE_FORMATS = ['image/jpeg', 'image/png'];
     const MAX_IMAGE_FILE = 2 * 1024 * 1024
@@ -19,10 +21,18 @@ const ImageField = ({ imageFile, setImageFile, imageKey = 'image' }) => {
                 setImageFile(file)
                 setAlert({ ...alert, open: false })
             } else {
-                setAlert({ ...alert, open: true, message: 'Ukuran file melebihi 2MB.' })
+                setOpenSnackbar({
+                    open: true,
+                    message: 'Ukuran file melebihi 2MB.',
+                    severity: 'warning',
+                })
             }
         } else {
-            setAlert({ ...alert, open: true, message: 'Format file harus JPG, JPEG, PNG.' })
+            setOpenSnackbar({
+                open: true,
+                message: 'Format file harus JPG, JPEG, PNG.',
+                severity: 'warning',
+            })
         }
     }
 
@@ -30,9 +40,9 @@ const ImageField = ({ imageFile, setImageFile, imageKey = 'image' }) => {
         return (
             <div className='flex flex-col items-center gap-3'>
                 <Icon icon={'uim:image-v'} className='text-4xl text-primary' />
-                <div className='flex flex-col items-center gap-1'>
+                <div className='flex flex-col items-center gap-1 text-xs md:text-sm'>
                     <div className="flex items-center justify-center gap-2">
-                        <h3 className=""><span className='font-semibold text-primary'>Klik untuk Unggah </span>atau seret dan lepas</h3>
+                        <h3 className="text-center"><span className='font-semibold text-center text-primary'>Klik untuk Unggah </span>atau seret dan lepas</h3>
                     </div>
                     <h3 className="text-xs">(Maks. Ukuran file: 2MB)</h3>
                 </div>
@@ -63,19 +73,6 @@ const ImageField = ({ imageFile, setImageFile, imageKey = 'image' }) => {
 
     return (
         <div className="h-full space-y-2">
-            {alert.open &&
-                <div className="flex items-center justify-between p-3 bg-red-100 rounded-lg">
-                    <div className="flex items-center gap-2 text-red-600">
-                        <Icon icon={'carbon:warning'} className="text-xl" />
-                        <h3 className="font-medium text-red-600">{alert.message}</h3>
-                    </div>
-                    <Icon
-                        icon={'ic:outline-close'}
-                        className="text-xl cursor-pointer text-slate-500"
-                        onClick={() => setAlert({ ...alert, open: false })}
-                    />
-                </div>
-            }
             <input
                 id={imageKey}
                 type="file"
@@ -89,9 +86,9 @@ const ImageField = ({ imageFile, setImageFile, imageKey = 'image' }) => {
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
             >
-                {previewUrl != null ? (
+                {previewUrl ? (
                     <Image
-                        src={previewUrl}
+                        src={previewUrl || '/dummy-image.jpg'}
                         alt="preview"
                         width={500}
                         height={500}

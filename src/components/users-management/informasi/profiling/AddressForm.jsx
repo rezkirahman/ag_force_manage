@@ -86,30 +86,36 @@ const AddressForm = ({ setID, data }) => {
                 renderInput={(params) => <TextField {...params} label="Provinsi" />}
                 loading={loadingFetchList}
             />
-            <Autocomplete
-                value={city}
-                onChange={(event, newValue) => handleChangeAddress(newValue, 'city')}
-                options={cityCodeList}
-                isOptionEqualToValue={(option, value) => option === value}
-                renderInput={(params) => <TextField {...params} label="Kota" />}
-                loading={loadingFetchList}
-            />
-            <Autocomplete
-                value={district}
-                onChange={(event, newValue) => handleChangeAddress(newValue, 'district')}
-                options={districtCodeList}
-                isOptionEqualToValue={(option, value) => option === value}
-                renderInput={(params) => <TextField {...params} label="Kecamatan" />}
-                loading={loadingFetchList}
-            />
-            <Autocomplete
-                value={urban}
-                onChange={(event, newValue) => handleChangeAddress(newValue, 'urban')}
-                options={urbanList}
-                isOptionEqualToValue={(option, value) => option === value}
-                renderInput={(params) => <TextField {...params} label="Kelurahan" />}
-                loading={loadingFetchList}
-            />
+            {province && (
+                <Autocomplete
+                    value={city}
+                    onChange={(event, newValue) => handleChangeAddress(newValue, 'city')}
+                    options={cityCodeList}
+                    isOptionEqualToValue={(option, value) => option === value}
+                    renderInput={(params) => <TextField {...params} label="Kota" />}
+                    loading={loadingFetchList}
+                />
+            )}
+            {(city && province) && (
+                <Autocomplete
+                    value={district}
+                    onChange={(event, newValue) => handleChangeAddress(newValue, 'district')}
+                    options={districtCodeList}
+                    isOptionEqualToValue={(option, value) => option === value}
+                    renderInput={(params) => <TextField {...params} label="Kecamatan" />}
+                    loading={loadingFetchList}
+                />
+            )}
+            {(city && province && district) && (
+                <Autocomplete
+                    value={urban}
+                    onChange={(event, newValue) => handleChangeAddress(newValue, 'urban')}
+                    options={urbanList}
+                    isOptionEqualToValue={(option, value) => option === value}
+                    renderInput={(params) => <TextField {...params} label="Kelurahan" />}
+                    loading={loadingFetchList}
+                />
+            )}
         </>
     )
 }

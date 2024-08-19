@@ -37,26 +37,25 @@ const Navbar = () => {
     }, [menu, pathname])
 
     useEffect(() => {
+        const localUnitKerja = localStorage.getItem('unit-kerja-unique')
         if (suggestUnitKerja) {
-            if (!unitKerja) {
+            if (localUnitKerja) {
+                suggestUnitKerja.forEach(element => {
+                    if (element.unique == localUnitKerja) {
+                        setUnitKerja(element)
+                        localStorage.setItem('unit-kerja-unique', element.unique)
+                    }
+                })
+            } else {
                 suggestUnitKerja.forEach(element => {
                     if (element.selected) {
                         setUnitKerja(element)
+                        localStorage.setItem('unit-kerja-unique', element.unique)
                     }
                 })
             }
         }
     }, [setUnitKerja, suggestUnitKerja, unitKerja])
-
-    // useEffect(() => {
-    //     const cookies = parseCookies()
-    //     const unit = cookies.unit_kerja
-    //     if(unit){
-    //         if(!unitKerja){
-    //             setCookie
-    //         }
-    //     }
-    // }, [suggestUnitKerja])
 
     useEffect(() => {
         const isSettingExpand = pathname.includes('/settings')
@@ -86,7 +85,10 @@ const Navbar = () => {
                             disableClearable
                             disablePortal
                             value={unitKerja}
-                            onChange={(e, value) => setUnitKerja(value)}
+                            onChange={(e, value) => {
+                                setUnitKerja(value)
+                                localStorage.setItem('unit-kerja-unique', value.unique)
+                            }}
                             options={suggestUnitKerja}
                             isOptionEqualToValue={(option, value) => option?.unique === value?.unique}
                             getOptionLabel={(option) => option?.name}
@@ -172,7 +174,10 @@ export const MobileNavbar = () => {
                         disableClearable
                         disablePortal
                         value={unitKerja}
-                        onChange={(e, value) => setUnitKerja(value)}
+                        onChange={(e, value) => {
+                            setUnitKerja(value)
+                            localStorage.setItem('unit-kerja-unique', value.unique)
+                        }}
                         options={suggestUnitKerja}
                         isOptionEqualToValue={(option, value) => option?.unique === value?.unique}
                         getOptionLabel={(option) => option?.name}

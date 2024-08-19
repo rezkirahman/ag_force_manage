@@ -1,7 +1,9 @@
+import { useAppContext } from '@/context'
 import { Button, InputAdornment, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
 
 const FileField = ({ file, setFile, title, type = 'pdf' }) => {
+    const {setOpenSnackbar}=useAppContext()
     const [fileType, setFileType] = useState('PDF')
 
     const getFileTypes = (type) => {
@@ -34,7 +36,11 @@ const FileField = ({ file, setFile, title, type = 'pdf' }) => {
         if (selectedFile && allowedTypes.includes(selectedFile.type) && selectedFile.size <= maxSize) {
             setFile(selectedFile);
         } else {
-            alert(`File must be a ${printedAllowedTypes} and cannot be more than 2MB.`);
+            setOpenSnackbar({
+                open: true,
+                message: `File must be a ${printedAllowedTypes} and cannot be more than 2MB.`,
+                severity: 'warning',
+            })
         }
     };
 

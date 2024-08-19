@@ -1,13 +1,14 @@
 import ModalLayout from "@/components/ModalLayout"
+import PrimaryButton from "@/components/PrimaryButton"
 import { Icon } from "@iconify/react"
 import { Button } from "@mui/material"
 
-const ModalEditProfilingLayout = ({ open, setOpen, refresh, title, children, loading, handleClick = null }) => {
+const ModalEditProfilingLayout = ({ open, setOpen, refresh, title, children, loading, handleClick = null, edit = false }) => {
     return (
         <ModalLayout
             open={open}
             setOpen={setOpen}
-            title={`Ubah Informasi ${title}`}
+            title={`${edit ? 'Ubah' : 'Tambah'} Informasi ${title}`}
             refresh={refresh}
         >
             <div className="relative space-y-6">
@@ -15,15 +16,14 @@ const ModalEditProfilingLayout = ({ open, setOpen, refresh, title, children, loa
                     {children}
                 </div>
                 <div className="flex justify-end">
-                    <Button
-                        variant='contained'
-                        size='large'
+                    <PrimaryButton
                         onClick={handleClick}
                         disabled={loading}
-                        className="w-full md:w-1/5"
+                        loading={loading}
+                        className={'w-full md:w-1/5'}
                     >
-                        {loading ? <Icon icon='mdi:loading' className='text-[27px] animate-spin' /> : 'Ubah'}
-                    </Button>
+                        {edit ? 'Ubah' : 'Tambahkan'}
+                    </PrimaryButton>
                 </div>
             </div>
         </ModalLayout>

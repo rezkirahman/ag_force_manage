@@ -109,6 +109,7 @@ const ModalEditPribadi = ({ open, setOpen, refresh, title, data }) => {
             title={title}
             loading={loadingUpdate}
             handleClick={handleUpdate}
+            edit
         >
             <FormControl fullWidth>
                 <InputLabel>Jenis Identitas</InputLabel>

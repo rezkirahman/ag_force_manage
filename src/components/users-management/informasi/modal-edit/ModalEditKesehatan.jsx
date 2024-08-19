@@ -136,6 +136,7 @@ const ModalEditKesehatan = ({ open, setOpen, refresh, title, data }) => {
             refresh={refresh}
             loading={loadingUpdate}
             handleClick={handleUpdate}
+            edit
         >
             <FormControl fullWidth>
                 <InputLabel htmlFor='sport'>Sering berolahraga</InputLabel>

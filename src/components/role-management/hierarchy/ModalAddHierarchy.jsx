@@ -91,7 +91,7 @@ const ModalAddHierarchy = ({ open, setOpen, refresh, node }) => {
                 <div className="w-full md:w-1/4">
                     <PrimaryButton
                         loading={loading}
-                        disabled={loading}
+                        disabled={loading || !selectedRole.length}
                         onClick={handleAddRole}
                     >
                         Tambahkan

@@ -10,6 +10,7 @@ import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useState, useEffect, useCallback } from 'react'
 import { listUserRequest } from '@/api/cuti&izin/cutiIzin'
 import ModalExportCutiIzin from '@/components/cuti-izin/ModalExportCutiIzin'
+import ModalDetailCutiIzin from '@/components/cuti-izin/ModalDetailCutiIzin'
 
 const Page = () => {
     const { unitKerja } = useAppContext()
@@ -18,6 +19,8 @@ const Page = () => {
     const [openModalCuti, setOpenModalCuti] = useState(false)
     const [openModalImport, setOpenModalImport] = useState(false)
     const [openModalExport, setOpenModalExport] = useState(false)
+    const [openModalDetail, setOpenModalDetail] = useState(false)
+    const [selectedList, setSelectedList] = useState([])
     const [list, setList] = useState([])
     const [loadingList, setLoadingList] = useState(false)
 
@@ -27,7 +30,6 @@ const Page = () => {
         setList([])
         const { data } = await listUserRequest({ unitKerja: unitKerja.id })
         if (data?.data) {
-            console.log(data?.data);
             setList(data.data)
         }
         setLoadingList(false)
@@ -36,8 +38,21 @@ const Page = () => {
 
     return (
         <Layout>
-            <ModalSaldoCuti open={openModalCuti} setOpen={setOpenModalCuti} />
-            <ModalImportSaldoCuti open={openModalImport} setOpen={setOpenModalImport} />
+            <ModalDetailCutiIzin
+            open={openModalDetail}
+            setOpen={setOpenModalDetail}
+            data={selectedList}
+            />
+            <ModalSaldoCuti
+                open={openModalCuti}
+                setOpen={setOpenModalCuti}
+                refresh={handleList}
+            />
+            <ModalImportSaldoCuti
+                open={openModalImport}
+                setOpen={setOpenModalImport}
+                refresh={handleList}
+            />
             <ModalExportCutiIzin open={openModalExport} setOpen={setOpenModalExport} />
             <Container>
                 <div className='space-y-6'>
@@ -100,8 +115,7 @@ const Page = () => {
                                 <HeadItem start>ID</HeadItem>
                                 <HeadItem>NIK</HeadItem>
                                 <HeadItem>Nama</HeadItem>
-                                <HeadItem>Status</HeadItem>
-                                <HeadItem>Foto</HeadItem>
+                                <HeadItem>Kategori</HeadItem>
                                 <HeadItem end>Aksi</HeadItem>
                             </HeadRow>
                         </TableHead>
@@ -111,22 +125,45 @@ const Page = () => {
                                     <BodyItem start number>{item.ref_id}</BodyItem>
                                     <BodyItem number>{item.nik}</BodyItem>
                                     <BodyItem>
-                                        <Tooltip arrow title={`${item.full_name} - ${item.role_name}`}>
+                                        <Tooltip arrow title={`${item.name} - ${item.role}`}>
                                             <div className="">
-                                                <h3 className="font-semibold line-clamp-1">{item.full_name}</h3>
-                                                <h3 className="text-xs line-clamp-1">{item.role_name}</h3>
+                                                <h3 className="font-semibold line-clamp-1">{item.name}</h3>
+                                                <h3 className="text-xs line-clamp-1">{item.role}</h3>
                                             </div>
                                         </Tooltip>
                                     </BodyItem>
-                                    <BodyItem>
-                                    </BodyItem>
-                                    <BodyItem>
-
-                                    </BodyItem>
+                                    <BodyItem>{item.category}</BodyItem>
                                     <BodyItem end>
-                                        <Tooltip title='Detail' arrow>
-
-                                        </Tooltip>
+                                        <div className='flex items-center gap-2'>
+                                            <Tooltip title='Detail' arrow>
+                                                <IconButton
+                                                    size='small'
+                                                    color='inherit'
+                                                    onClick={() => {
+                                                        setSelectedList(item)
+                                                        setOpenModalDetail(true)
+                                                    }}
+                                                >
+                                                    <Icon icon={'solar:document-line-duotone'} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title='Setujui' arrow>
+                                                <IconButton
+                                                    size='small'
+                                                    color='success'
+                                                >
+                                                    <Icon icon={'iconamoon:check-bold'} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title='Tolak' arrow>
+                                                <IconButton
+                                                    size='small'
+                                                    color='error'
+                                                >
+                                                    <Icon icon={'iconamoon:close-bold'} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </div>
                                     </BodyItem>
                                 </BodyRow>
                             ))}

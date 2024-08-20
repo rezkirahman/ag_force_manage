@@ -32,6 +32,21 @@ export const suggestUserCutiIzin = async ({ unitKerja }) => {
     })
 }
 
+export const suggestTypeCutiIzin = async ({ unitKerja }) => {
+    const body = JSON.stringify({ search: '' })
+    const signature = MakeSignatureHeader(`/api/v1/cisw/v2/suggest-type`, 'POST', body)
+    return await api.post(`/v1/cisw/v2/suggest-type`, body, {
+        headers: {
+            ...signature,
+            'X-Unit-Kerja': unitKerja
+        }
+    }).then((response) => {
+        return response
+    }).catch((error) => {
+        return error
+    })
+}
+
 export const updateSaldoCuti = async ({ unitKerja, body }) => {
     const stringBody = JSON.stringify(body)
     const signature = MakeSignatureHeader(`/api/v1/cisw/v2/update-saldo`, 'POST', stringBody)
@@ -71,6 +86,21 @@ export const importSaldoCuti =async ({unitKerja, file})=>{
             ...signature,
             'X-Unit-Kerja': unitKerja,
             'Content-Type': 'multipart/form-data'
+        }
+    }).then((response) => {
+        return response
+    }).catch((error) => {
+        return error
+    })
+}
+
+export const exportSaldoCuti = async ({ unitKerja, body }) => {
+    const stringBody = JSON.stringify(body)
+    const signature = MakeSignatureHeader(`/api/v1/cisw/export`, 'POST', stringBody)
+    return await api.post(`/v1/cisw/export`, stringBody, {
+        headers: {
+            ...signature,
+            'X-Unit-Kerja': unitKerja
         }
     }).then((response) => {
         return response

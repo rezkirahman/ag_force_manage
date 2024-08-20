@@ -7,7 +7,7 @@ import { suggestUserCutiIzin, updateSaldoCuti } from '@/api/cuti&izin/cutiIzin'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 
-const ModalSaldoCuti = ({ open, setOpen }) => {
+const ModalSaldoCuti = ({ open, setOpen,refresh }) => {
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
     const checkedIcon = <CheckBoxIcon fontSize="small" />
     const { unitKerja, setOpenSnackbar } = useAppContext()
@@ -47,6 +47,7 @@ const ModalSaldoCuti = ({ open, setOpen }) => {
                 message: 'Berhasil mengubah saldo cuti',
                 severity: 'success'
             })
+            refresh()
             setOpen(false)
         } else {
             setOpenSnackbar({
@@ -56,7 +57,7 @@ const ModalSaldoCuti = ({ open, setOpen }) => {
             })
         }
         setLoading(false)
-    }, [unitKerja, suggestUser, selectedUser, appliedAllUser, saldo, description, setOpenSnackbar])
+    }, [unitKerja, appliedAllUser, suggestUser, selectedUser, saldo, description, setOpenSnackbar, refresh, setOpen])
 
     useEffect(() => {
         if (open) {

@@ -10,6 +10,7 @@ import ModalChangePhotoProfiling from "@/components/users-management/informasi/m
 import { useSearchParams } from "next/navigation"
 import KehadiranTab from "@/components/users-management/kehadiran/KehadiranTab"
 import JurnalTab from "@/components/users-management/jurnal/JurnalTab"
+import CutiIzinTab from "@/components/users-management/cuti&izin/CutiIzinTab"
 
 const Page = ({ params }) => {
     const searchParams = useSearchParams()
@@ -63,7 +64,7 @@ const Page = ({ params }) => {
         kehadiran: <KehadiranTab />,
         jurnal: <JurnalTab />,
         aktivitas: 'activity',
-        cutiIzin: "-"
+        cutiIzin: <CutiIzinTab />
 
     };
 

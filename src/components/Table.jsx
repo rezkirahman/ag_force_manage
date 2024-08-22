@@ -24,7 +24,7 @@ export const Table = ({ children, className, loading = false, list }) => {
 
 export const TableHead = ({ children }) => {
     return (
-        <thead className="sticky top-0 z-10 duration-150 border-b border-gray-100">
+        <thead className="sticky top-0 z-10 duration-150 bg-white border-b border-gray-100">
             {children}
         </thead>
     )

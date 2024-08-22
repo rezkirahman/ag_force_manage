@@ -109,7 +109,6 @@ const ModalImportSaldoCuti = ({ open, setOpen, refresh }) => {
 export default ModalImportSaldoCuti
 
 const ModalResult = ({ open, setOpen, setOpenParent, list }) => {
-
     return (
         <ModalLayout
             open={open}
@@ -119,9 +118,6 @@ const ModalResult = ({ open, setOpen, setOpenParent, list }) => {
                 setOpenParent(false)
             }}
         >
-            <Alert severity='success'>
-                Berhasil import saldo cuti karyawan
-            </Alert>
             <Table list={list} loading={false} className={'h-[50vh]'}>
                 <TableHead>
                     <HeadRow className={'uppercase align-top'}>

@@ -77,7 +77,7 @@ export const templateSaldoCuti = async ({ unitKerja }) => {
 
 }
 
-export const importSaldoCuti =async ({unitKerja, file})=>{
+export const importSaldoCuti = async ({ unitKerja, file }) => {
     const formData = new FormData()
     formData.append('excel', file)
     const signature = MakeSignatureHeader(`/api/v1/cisw/v2/import-saldo`, 'POST', '{}')
@@ -98,6 +98,35 @@ export const exportSaldoCuti = async ({ unitKerja, body }) => {
     const stringBody = JSON.stringify(body)
     const signature = MakeSignatureHeader(`/api/v1/cisw/export`, 'POST', stringBody)
     return await api.post(`/v1/cisw/export`, stringBody, {
+        headers: {
+            ...signature,
+            'X-Unit-Kerja': unitKerja
+        }
+    }).then((response) => {
+        return response
+    }).catch((error) => {
+        return error
+    })
+}
+
+export const confirmationCutiIzin = async ({ unitKerja, body, id }) => {
+    const stringBody = JSON.stringify(body)
+    const signature = MakeSignatureHeader(`/api/v1/cisw/v2/action/${id}`, 'POST', stringBody)
+    return await api.post(`/v1/cisw/v2/action/${id}`, stringBody, {
+        headers: {
+            ...signature,
+            'X-Unit-Kerja': unitKerja
+        }
+    }).then((response) => {
+        return response
+    }).catch((error) => {
+        return error
+    })
+}
+
+export const detailCutiIzin = async ({ unitKerja, id }) => {
+    const signature = MakeSignatureHeader(`/api/v1/cisw/v2/detail/${id}`, 'GET', '{}')
+    return await api.get(`/v1/cisw/v2/detail/${id}`, {
         headers: {
             ...signature,
             'X-Unit-Kerja': unitKerja

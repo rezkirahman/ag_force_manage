@@ -11,6 +11,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { listUserRequest } from '@/api/cuti&izin/cutiIzin'
 import ModalExportCutiIzin from '@/components/cuti-izin/ModalExportCutiIzin'
 import ModalDetailCutiIzin from '@/components/cuti-izin/ModalDetailCutiIzin'
+import ModalCofirmationCutiIzin from '@/components/cuti-izin/ModalCofirmationCutiIzin'
 
 const Page = () => {
     const { unitKerja } = useAppContext()
@@ -20,6 +21,8 @@ const Page = () => {
     const [openModalImport, setOpenModalImport] = useState(false)
     const [openModalExport, setOpenModalExport] = useState(false)
     const [openModalDetail, setOpenModalDetail] = useState(false)
+    const [openModalConfirm, setOpenModalConfirm] = useState(false)
+    const [openModalReject, setOpenModalReject] = useState(false)
     const [selectedList, setSelectedList] = useState([])
     const [list, setList] = useState([])
     const [loadingList, setLoadingList] = useState(false)
@@ -38,10 +41,23 @@ const Page = () => {
 
     return (
         <Layout>
+            <ModalCofirmationCutiIzin
+                open={openModalConfirm}
+                setOpen={setOpenModalConfirm}
+                refresh={handleList}
+                user={selectedList}
+                approve
+            />
+            <ModalCofirmationCutiIzin
+                open={openModalReject}
+                setOpen={setOpenModalReject}
+                refresh={handleList}
+                user={selectedList}
+            />
             <ModalDetailCutiIzin
-            open={openModalDetail}
-            setOpen={setOpenModalDetail}
-            data={selectedList}
+                open={openModalDetail}
+                setOpen={setOpenModalDetail}
+                data={selectedList}
             />
             <ModalSaldoCuti
                 open={openModalCuti}
@@ -57,7 +73,13 @@ const Page = () => {
             <Container>
                 <div className='space-y-6'>
                     <div className='flex items-center justify-between gap-6'>
-                        <h3 className='text-lg font-semibold'>Pengajuan</h3>
+                        <div className='flex items-center gap-2'>
+                            <h3 className='text-lg font-semibold'>Pengajuan</h3>
+                            <div className='flex items-center gap-1 px-4 py-2 rounded-full text-primary bg-primary/10 ring-1 ring-inset ring-primary'>
+                                <Icon icon={'ion:document-text'} />
+                                <h3 className='text-xs font-semibold leading-none'>{list?.length}</h3>
+                            </div>
+                        </div>
                         <div className=''>
                             <IconButton
                                 variant='outlined'
@@ -151,6 +173,10 @@ const Page = () => {
                                                 <IconButton
                                                     size='small'
                                                     color='success'
+                                                    onClick={() => {
+                                                        setSelectedList(item)
+                                                        setOpenModalConfirm(true)
+                                                    }}
                                                 >
                                                     <Icon icon={'iconamoon:check-bold'} />
                                                 </IconButton>
@@ -159,6 +185,10 @@ const Page = () => {
                                                 <IconButton
                                                     size='small'
                                                     color='error'
+                                                    onClick={() => {
+                                                        setSelectedList(item)
+                                                        setOpenModalReject(true)
+                                                    }}
                                                 >
                                                     <Icon icon={'iconamoon:close-bold'} />
                                                 </IconButton>

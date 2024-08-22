@@ -76,13 +76,13 @@ const KehadiranTab = () => {
                         size='medium'
                         variant='contained'
                         onClick={() => setOpenModalFilter(true)}
-                        startIcon={<Icon icon="mage:filter-fill" />}
+                        startIcon={<Icon icon="hugeicons:filter-horizontal" />}
                     >
                         Filter
                     </Button>
                 </div>
                 <div className='flex flex-col justify-between h-full gap-6'>
-                    <Table list={list} loading={loadingList}>
+                    <Table list={list} loading={loadingList} className={'h-[300px]'}>
                         <TableHead>
                             <HeadRow className={'align-top'}>
                                 <HeadItem start>Tanggal</HeadItem>

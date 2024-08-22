@@ -1,8 +1,33 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ModalLayout from '../ModalLayout'
 import { InformasiFormatting } from '../users-management/informasi/InformasiTab'
+import { useAppContext } from '@/context'
+import { detailCutiIzin } from '@/api/cuti&izin/cutiIzin'
 
-const ModalDetailCutiIzin = ({ open, setOpen, data }) => {
+const ModalDetailCutiIzin = ({ open, setOpen, data, id = null }) => {
+    const { unitKerja } = useAppContext()
+    const [detail, setDetail] = useState({})
+
+    const handleDetail = useCallback(async () => {
+        if (!unitKerja) return
+        setDetail({})
+        const { data } = await detailCutiIzin({
+            unitKerja: unitKerja.id,
+            id: id
+        })
+        if (data?.data) {
+            setDetail(data.data)
+        }
+    }, [id, unitKerja])
+
+    useEffect(() => {
+        if (id) {
+            handleDetail()
+        } else {
+            setDetail(data)
+        }
+    }, [data, handleDetail, id])
+
     return (
         <ModalLayout
             open={open}
@@ -12,27 +37,26 @@ const ModalDetailCutiIzin = ({ open, setOpen, data }) => {
         >
             <div className='flex flex-col gap-2 divide-y-2 h-[60vh] overflow-y-auto pr-2'>
                 <RincianFormating label={'Pemohon'}>
-                    <InformasiFormatting label='Nama' value={data?.name} />
-                    <InformasiFormatting label='Foto' value={data?.photo} image />
-                    <InformasiFormatting label='ID' value={data?.id} />
-                    <InformasiFormatting label='NIK' value={data?.nik} />
-                    <InformasiFormatting label='Divisi / Departemen' value={data?.division} />
-                    <InformasiFormatting label='jabatan' value={data?.role} />
-                    <InformasiFormatting label='No. Telepon' value={data?.phone_number} />
+                    <InformasiFormatting label='Nama' value={detail?.name} />
+                    <InformasiFormatting label='Foto' value={detail?.photo} image />
+                    <InformasiFormatting label='NIK' value={detail?.nik} />
+                    <InformasiFormatting label='Divisi / Departemen' value={detail?.division} />
+                    <InformasiFormatting label='jabatan' value={detail?.role} />
+                    <InformasiFormatting label='No. Telepon' value={detail?.phone_number} />
                 </RincianFormating>
                 <RincianFormating label={'Pengajuan'}>
-                    <InformasiFormatting label='Saldo Cuti' value={`${data?.saldo} Hari`} />
-                    <InformasiFormatting label='pengajuan' value={`${data?.count_days} Hari`} />
-                    <InformasiFormatting label='Kategori' value={data?.category} />
-                    <InformasiFormatting label='Keterangan' value={data?.reason} />
-                    <InformasiFormatting label='Tanggal Cuti / Izin' value={data?.absence_date} />
-                    <InformasiFormatting label='Tanggal Kembali Bekerja' value={data?.back_to_work} />
-                    <InformasiFormatting label='Pengajuan dibuat' value={data?.submission} />
-                    {data?.Documents?.map((doc, i) => (
+                    <InformasiFormatting label='Saldo Cuti' value={`${detail?.saldo} Hari`} />
+                    <InformasiFormatting label='pengajuan' value={`${detail?.count_days} Hari`} />
+                    <InformasiFormatting label='Kategori' value={detail?.category} />
+                    <InformasiFormatting label='Keterangan' value={detail?.reason} />
+                    <InformasiFormatting label='Tanggal Cuti / Izin' value={detail?.absence_date} />
+                    <InformasiFormatting label='Tanggal Kembali Bekerja' value={detail?.back_to_work} />
+                    <InformasiFormatting label='Pengajuan dibuat' value={detail?.submission} />
+                    {detail?.Documents?.map((doc, i) => (
                         <InformasiFormatting key={i} label={`Dokumen ${i + 1}`} value={doc.document} link />
                     ))}
                 </RincianFormating>
-                {data?.BackupPerson?.map((item, i) => (
+                {detail?.BackupPerson?.map((item, i) => (
                     <RincianFormating key={i} label={item.title}>
                         <InformasiFormatting label='Saldo Cuti' value={item.name} />
                         <InformasiFormatting label='NIK' value={item.nik} />
@@ -42,7 +66,7 @@ const ModalDetailCutiIzin = ({ open, setOpen, data }) => {
                         <InformasiFormatting label='Disetujui' value={item.date} />
                     </RincianFormating>
                 ))}
-                {data?.Superior?.map((item, i) => (
+                {detail?.Superior?.map((item, i) => (
                     <RincianFormating key={i} label={item.title}>
                         <InformasiFormatting label='Saldo Cuti' value={item.name} />
                         <InformasiFormatting label='NIK' value={item.nik} />

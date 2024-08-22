@@ -18,7 +18,7 @@ export const informationProfile = async (unitKerja, id) => {
 }
 
 export const updateProfilingData = async ({ type, unitKerja, id, body, childId }) => {
-    
+
     const stringBody = JSON.stringify(body)
     const endpointMap = {
         photo: '/update-photo/',

@@ -126,7 +126,7 @@ const OperasionalTab = () => {
                             variant='contained'
                             color='primary'
                             onClick={() => setOpenModalFilter(true)}
-                            startIcon={<Icon icon="mage:filter-fill" />}
+                            startIcon={<Icon icon="hugeicons:filter-horizontal" />}
                         >
                             Filter
                         </Button>

@@ -112,7 +112,7 @@ const ModalEditProfil = ({ open, setOpen, refresh, title, data }) => {
             />
             <TextField
                 value={firstName}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setFirstName(e.target.value)}
                 label='Nama Depan'
                 fullWidth
             />
